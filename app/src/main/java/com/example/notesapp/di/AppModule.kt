@@ -1,6 +1,7 @@
 package com.example.notesapp.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.example.notesapp.database.NoteDatabase
 import com.example.notesapp.database.repositories.CategoryRepositoryImpl
@@ -15,6 +16,7 @@ import com.example.notesapp.domain.use_cases.notes.NoteUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -24,7 +26,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteDatabase(app: Application): NoteDatabase {
+    fun provideNoteDatabase(
+        @ApplicationContext app: Context
+        // app: Context - Potem się zmieni, jak nie będzie
+        // potrzeby wykorzystywać main activity
+    ): NoteDatabase {
         return Room.databaseBuilder(
             app,
             NoteDatabase::class.java,
