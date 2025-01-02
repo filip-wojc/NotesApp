@@ -12,7 +12,11 @@ import com.example.notesapp.domain.repositories.NoteRepository
 import com.example.notesapp.domain.repositories.PriorityRepository
 import com.example.notesapp.domain.use_cases.notes.DeleteNoteUseCase
 import com.example.notesapp.domain.use_cases.notes.GetAllNotesUseCase
+import com.example.notesapp.domain.use_cases.notes.GetNoteByIdUseCase
+import com.example.notesapp.domain.use_cases.notes.GetNotesByCategoryIdUseCase
+import com.example.notesapp.domain.use_cases.notes.GetNotesByPriorityIdUseCase
 import com.example.notesapp.domain.use_cases.notes.NoteUseCases
+import com.example.notesapp.domain.use_cases.notes.UpsertNoteUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,7 +65,11 @@ object AppModule {
     fun provideNoteUseCases(repository: NoteRepository): NoteUseCases {
         return NoteUseCases(
             getAllNotes = GetAllNotesUseCase(repository),
-            deleteNotes = DeleteNoteUseCase(repository)
+            getNotesByCategory = GetNotesByCategoryIdUseCase(repository),
+            getNotesByPriority = GetNotesByPriorityIdUseCase(repository),
+            getNote = GetNoteByIdUseCase(repository),
+            upsertNote = UpsertNoteUseCase(repository),
+            deleteNotes = DeleteNoteUseCase(repository),
         )
     }
 
