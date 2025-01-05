@@ -4,18 +4,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
+import androidx.lifecycle.lifecycleScope
+import com.example.notesapp.domain.models.Category
 import com.example.notesapp.domain.models.Priority
+import com.example.notesapp.domain.repositories.CategoryRepository
 import com.example.notesapp.domain.repositories.PriorityRepository
+import com.example.notesapp.presentation.Notes.NotesScreen
 import com.example.notesapp.ui.theme.NotesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-//Main activity tymczasowo zmieniony zeby sprawdzic czy baza
-//sie generuje
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -26,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             NotesAppTheme {
-               Text("Hello World")
+                NotesScreen()
             }
         }
     }

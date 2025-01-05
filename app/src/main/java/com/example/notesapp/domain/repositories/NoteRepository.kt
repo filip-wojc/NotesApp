@@ -8,8 +8,6 @@ interface NoteRepository {
 
     fun getNotesByCategoryId(categoryId: Int): Flow<List<Note>>
 
-    fun getNotesByPriorityId(priorityId: Int): Flow<List<Note>>
-
     suspend fun getNoteById(id: Int): Note?
 
     suspend fun upsertNote(note: Note)

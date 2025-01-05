@@ -21,10 +21,11 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
     val notes: List<Note> = _notes
 
     init {
+        // addTestNotes()
         getNotes()
     }
 
-    fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)){
+    private fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Ascending)){
         viewModelScope.launch{
             _noteUseCases.getAllNotes(noteOrder).collect { noteList ->
                 _notes.clear()
@@ -44,6 +45,34 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         }
     }
 
+
+    private fun addTestNotes() {
+        viewModelScope.launch {
+            _noteUseCases.upsertNote(
+                Note(
+                    noteId = 0,
+                    title = "Test Note 1",
+                    content = "This is the content for Test Note 1.",
+                    timestamp = System.currentTimeMillis(),
+                    categoryId = 1,
+                    priorityId = 1,
+                    color = Color.Red.toArgb()
+                )
+            )
+
+            _noteUseCases.upsertNote(
+                Note(
+                    noteId = 0,
+                    title = "Test Note 2",
+                    content = "This is the content for Test Note 2.",
+                    timestamp = System.currentTimeMillis(),
+                    categoryId = 1,
+                    priorityId = 2,
+                    color = Color.Blue.toArgb() // Light green color
+                )
+            )
+        }
+    }
 
 
 }

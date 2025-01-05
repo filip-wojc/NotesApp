@@ -17,10 +17,6 @@ class NoteRepositoryImpl(
         return dao.getNotesByCategoryId(categoryId)
     }
 
-    override fun getNotesByPriorityId(priorityId: Int): Flow<List<Note>> {
-        return dao.getNotesByPriorityId(priorityId)
-    }
-
     override suspend fun getNoteById(id: Int): Note? {
         return dao.getNoteById(id)
     }
