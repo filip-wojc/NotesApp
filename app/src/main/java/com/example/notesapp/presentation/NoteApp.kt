@@ -1,7 +1,6 @@
-package com.example.notesapp
+package com.example.notesapp.presentation
 
 import android.app.Application
-import com.example.notesapp.database.NoteDatabase
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

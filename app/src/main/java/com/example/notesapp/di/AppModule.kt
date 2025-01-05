@@ -31,9 +31,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNoteDatabase(
-        @ApplicationContext app: Context
-        // app: Context - Potem się zmieni, jak nie będzie
-        // potrzeby wykorzystywać main activity
+         @ApplicationContext app: Context
     ): NoteDatabase {
         return Room.databaseBuilder(
             app,
@@ -72,5 +70,7 @@ object AppModule {
             deleteNotes = DeleteNoteUseCase(repository),
         )
     }
+
+
 
 }
