@@ -10,6 +10,11 @@ import com.example.notesapp.database.repositories.PriorityRepositoryImpl
 import com.example.notesapp.domain.repositories.CategoryRepository
 import com.example.notesapp.domain.repositories.NoteRepository
 import com.example.notesapp.domain.repositories.PriorityRepository
+import com.example.notesapp.domain.use_cases.categories.CategoryUseCases
+import com.example.notesapp.domain.use_cases.categories.DeleteCategoryUseCase
+import com.example.notesapp.domain.use_cases.categories.GetAllCategoriesUseCase
+import com.example.notesapp.domain.use_cases.categories.GetCategoryByIdUseCase
+import com.example.notesapp.domain.use_cases.categories.UpsertCategoryUseCase
 import com.example.notesapp.domain.use_cases.notes.DeleteNoteUseCase
 import com.example.notesapp.domain.use_cases.notes.GetAllNotesUseCase
 import com.example.notesapp.domain.use_cases.notes.GetNoteByIdUseCase
@@ -69,6 +74,15 @@ object AppModule {
         )
     }
 
-
+    @Provides
+    @Singleton
+    fun provideCategoryUseCases(repository: CategoryRepository) : CategoryUseCases {
+        return CategoryUseCases(
+            getAllCategories = GetAllCategoriesUseCase(repository),
+            getCategoryById = GetCategoryByIdUseCase(repository),
+            upsertCategory = UpsertCategoryUseCase(repository),
+            deleteCategory = DeleteCategoryUseCase(repository)
+        )
+    }
 
 }
