@@ -46,12 +46,14 @@ fun NotePreview(
     note: Note,
     noteFormattedDate: String,
     isDeleting: Boolean,
-    onDelete: (Note) -> Unit
+    onDelete: (Note) -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(note.color))
+        colors = CardDefaults.cardColors(containerColor = Color(note.color)),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier

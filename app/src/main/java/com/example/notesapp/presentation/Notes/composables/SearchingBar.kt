@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.notesapp.ui.theme.LightYellow
 
 @Composable
 fun SearchingBar(
@@ -33,8 +34,8 @@ fun SearchingBar(
             singleLine = true,
             shape = RoundedCornerShape(18.dp),
             colors = androidx.compose.material3.TextFieldDefaults.colors(
-                focusedContainerColor = Color.Yellow,
-                unfocusedContainerColor = Color.Yellow,
+                focusedContainerColor = LightYellow,
+                unfocusedContainerColor = LightYellow,
                 disabledContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,

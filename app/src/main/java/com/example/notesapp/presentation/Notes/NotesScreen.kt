@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesapp.presentation.notes.NotesViewModel
 import com.example.notesapp.presentation.notes.composables.NotePreview
 import com.example.notesapp.presentation.notes.composables.SearchingBar
+import com.example.notesapp.presentation.notes.composables.SortMethodList
 
 
 @Composable
@@ -41,7 +42,7 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
     val isSortMethodsVisible = viewModel.isSortMethodVisible.collectAsState()
     val searchText = viewModel.searchText.collectAsState()
     val currentSortMethod = viewModel.currentSortMethod.collectAsState()
-    val isSortDescending = viewModel.isSortDescending.collectAsState()
+    val isOrderDescending = viewModel.isOrderDescending.collectAsState()
     val isDeleting = viewModel.isDeleting.collectAsState()
 
     Column(
@@ -80,10 +81,16 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                 onClick = {viewModel.toggleSortDirection()},
             ) {
                 Icon(
-                    imageVector = if (isSortDescending.value) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                    imageVector = if (isOrderDescending.value) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                     contentDescription = "SortButton",
                 )
             }
+        }
+
+        if (isSortMethodsVisible.value) {
+            SortMethodList(
+                onSelectSort = {viewModel.onSelectedSort(it)}
+            )
         }
 
         if (isSearchBarVisible.value) {
@@ -111,7 +118,8 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                             modifier = Modifier
                                 .weight(1f),
                             isDeleting = isDeleting.value,
-                            onDelete = {viewModel.deleteNote(note)}
+                            onDelete = {viewModel.deleteNote(note)},
+                            onClick = {}
                         )
                     }
                     if (rowNotes.size < 2) {

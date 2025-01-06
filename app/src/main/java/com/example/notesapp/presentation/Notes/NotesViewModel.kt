@@ -36,14 +36,14 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
     private val _searchText = MutableStateFlow("")
     val searchText : StateFlow<String> = _searchText
 
-    private val _currentSortMethod = MutableStateFlow("Last modification")
+    private val _currentSortMethod = MutableStateFlow("Date")
     val currentSortMethod : StateFlow<String> = _currentSortMethod
 
     private val _isSortMethodVisible = MutableStateFlow(false)
     val isSortMethodVisible : StateFlow<Boolean> = _isSortMethodVisible
 
-    private val _isSortDescending = MutableStateFlow(true)
-    val isSortDescending : StateFlow<Boolean> = _isSortDescending
+    private val _isOrderDescending = MutableStateFlow(true)
+    val isOrderDescending : StateFlow<Boolean> = _isOrderDescending
 
     private val _isDeleting = MutableStateFlow(false)
     val isDeleting : StateFlow<Boolean> = _isDeleting
@@ -52,7 +52,7 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         getNotes()
     }
 
-    fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)){
+    private fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)){
         viewModelScope.launch{
             _noteUseCases.getAllNotes(noteOrder).collect { noteList ->
                 _notes.clear()
@@ -77,18 +77,9 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         _isDeleting.value = !_isDeleting.value
     }
 
-    fun toggleSortDirection(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)) {
-        _isSortDescending.value = !_isSortDescending.value
-        if (_isSortDescending.value) {
-            getNotes(
-                noteOrder = NoteOrder.Date(OrderType.Descending)
-            )
-        }
-        else {
-            getNotes(
-                noteOrder = NoteOrder.Date(OrderType.Ascending)
-            )
-        }
+    fun toggleSortDirection() {
+        _isOrderDescending.value = !_isOrderDescending.value
+        getNotes(gerOrderType())
     }
 
     fun searchBarOnValueChange(value: String) {
@@ -99,6 +90,34 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         viewModelScope.launch {
             _noteUseCases.deleteNotes(note)
             _notes.remove(note)
+        }
+    }
+
+    fun onSelectedSort(sortMethod: String) {
+        _currentSortMethod.value = sortMethod
+        getNotes(gerOrderType())
+    }
+
+    private fun gerOrderType() : NoteOrder {
+        return if (_isOrderDescending.value) {
+            when (_currentSortMethod.value) {
+                "Date" -> return NoteOrder.Date(OrderType.Descending)
+                "Title" -> return NoteOrder.Title(OrderType.Descending)
+                "Category" -> return NoteOrder.Category(OrderType.Descending)
+                "Priority" -> return NoteOrder.Priority(OrderType.Descending)
+                "Color" -> return NoteOrder.Color(OrderType.Descending)
+                else -> NoteOrder.Date(OrderType.Descending)
+            }
+        }
+        else {
+            when (_currentSortMethod.value) {
+                "Date" -> NoteOrder.Date(OrderType.Ascending)
+                "Title" -> NoteOrder.Title(OrderType.Ascending)
+                "Category" -> NoteOrder.Category(OrderType.Ascending)
+                "Priority" -> NoteOrder.Priority(OrderType.Ascending)
+                "Color" -> NoteOrder.Color(OrderType.Ascending)
+                else -> NoteOrder.Date(OrderType.Ascending)
+            }
         }
     }
 
