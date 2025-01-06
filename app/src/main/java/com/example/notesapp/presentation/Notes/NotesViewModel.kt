@@ -36,11 +36,23 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
     private val _searchText = MutableStateFlow("")
     val searchText : StateFlow<String> = _searchText
 
+    private val _currentSortMethod = MutableStateFlow("Last modification")
+    val currentSortMethod : StateFlow<String> = _currentSortMethod
+
+    private val _isSortMethodVisible = MutableStateFlow(false)
+    val isSortMethodVisible : StateFlow<Boolean> = _isSortMethodVisible
+
+    private val _isSortDescending = MutableStateFlow(true)
+    val isSortDescending : StateFlow<Boolean> = _isSortDescending
+
+    private val _isDeleting = MutableStateFlow(false)
+    val isDeleting : StateFlow<Boolean> = _isDeleting
+
     init {
         getNotes()
     }
 
-    private fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Ascending)){
+    fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)){
         viewModelScope.launch{
             _noteUseCases.getAllNotes(noteOrder).collect { noteList ->
                 _notes.clear()
@@ -57,8 +69,37 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         _isSearchBarVisible.value = !_isSearchBarVisible.value
     }
 
+    fun toggleSortMethodsVisibility() {
+        _isSortMethodVisible.value = !_isSortMethodVisible.value
+    }
+
+    fun toggleDeleting() {
+        _isDeleting.value = !_isDeleting.value
+    }
+
+    fun toggleSortDirection(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)) {
+        _isSortDescending.value = !_isSortDescending.value
+        if (_isSortDescending.value) {
+            getNotes(
+                noteOrder = NoteOrder.Date(OrderType.Descending)
+            )
+        }
+        else {
+            getNotes(
+                noteOrder = NoteOrder.Date(OrderType.Ascending)
+            )
+        }
+    }
+
     fun searchBarOnValueChange(value: String) {
         _searchText.value = value
+    }
+
+    fun deleteNote(note: Note) {
+        viewModelScope.launch {
+            _noteUseCases.deleteNotes(note)
+            _notes.remove(note)
+        }
     }
 
     @SuppressLint("NewApi")
