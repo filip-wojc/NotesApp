@@ -13,8 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.Delete
 import com.example.notesapp.domain.models.Note
 import java.time.Instant
 import java.time.LocalDateTime
@@ -37,26 +44,32 @@ import java.time.ZoneId
 fun NotePreview(
     modifier: Modifier = Modifier,
     note: Note,
-    noteFormattedDate: String
+    noteFormattedDate: String,
+    isDeleting: Boolean,
+    onDelete: (Note) -> Unit
 ) {
-
     Card(
-        modifier = modifier
-            .padding(8.dp),
+        modifier = modifier.padding(8.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(note.color))
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = note.content,
-                maxLines = 6,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Black
-            )
+            Row (
+                Modifier.fillMaxWidth()
+            ){
+                Text(
+                    text = note.content,
+                    maxLines = 6,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Row (
@@ -67,8 +80,7 @@ fun NotePreview(
                 Column {
                     Text(
                         text = note.title,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                        style = MaterialTheme.typography.titleMedium,)
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
@@ -79,7 +91,17 @@ fun NotePreview(
                     )
                 }
             }
-
+            if (isDeleting) {
+                IconButton(
+                    onClick = {onDelete(note)},
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Delete"
+                    )
+                }
+            }
         }
     }
+
 }

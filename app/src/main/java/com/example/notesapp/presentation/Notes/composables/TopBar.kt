@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
@@ -21,10 +22,10 @@ import androidx.compose.ui.unit.sp
 fun TopBar(
     modifier: Modifier = Modifier,
     currentFilter: String,
-    isVisible: Boolean,
     toggleMenuVisibility: () -> Unit,
     toggleSearchBarVisibility: () -> Unit,
-    toggleDeleting: () -> Unit
+    toggleDeleting: () -> Unit,
+    isDeleting: Boolean
 ) {
     Row (
         modifier.fillMaxWidth(),
@@ -53,7 +54,7 @@ fun TopBar(
                 onClick = toggleSearchBarVisibility,
             ) {
                 Icon(
-                    imageVector = if (!isVisible) Icons.Filled.Search else Icons.Filled.Close,
+                    imageVector = Icons.Filled.Search,
                     contentDescription = "Toogle Searching"
                 )
             }
@@ -61,7 +62,7 @@ fun TopBar(
                 onClick = toggleDeleting,
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Delete,
+                    imageVector = if (!isDeleting) Icons.Filled.Delete else Icons.Filled.Check,
                     contentDescription = "Toogle delete"
                 )
             }
