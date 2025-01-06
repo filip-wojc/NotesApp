@@ -1,6 +1,8 @@
-package com.example.notesapp.presentation.Notes
+package com.example.notesapp.presentation.notes
 
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -12,7 +14,12 @@ import com.example.notesapp.domain.utils.NoteOrder
 import com.example.notesapp.domain.utils.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,8 +27,16 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
     private val _notes = mutableStateListOf<Note>()
     val notes: List<Note> = _notes
 
+    private val _isMenuVisible = MutableStateFlow(false)
+    val isMenuVisible : StateFlow<Boolean> = _isMenuVisible
+
+    private val _isSearchBarVisible = MutableStateFlow(false)
+    val isSearchBarVisible : StateFlow<Boolean> = _isSearchBarVisible
+
+    private val _searchText = MutableStateFlow("")
+    val searchText : StateFlow<String> = _searchText
+
     init {
-        // addTestNotes()
         getNotes()
     }
 
@@ -34,45 +49,26 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         }
     }
 
-    fun addOrUpdateNote(note: Note){
-        viewModelScope.launch {
-            try{
-                _noteUseCases.upsertNote(note)
-                getNotes()
-            } catch (e:Exception){
-                Log.e("addNote", e.message.toString())
-            }
-        }
+    fun toggleMenuVisibility() {
+        _isMenuVisible.value = !_isMenuVisible.value
     }
 
-
-    private fun addTestNotes() {
-        viewModelScope.launch {
-            _noteUseCases.upsertNote(
-                Note(
-                    noteId = 0,
-                    title = "Test Note 1",
-                    content = "This is the content for Test Note 1.",
-                    timestamp = System.currentTimeMillis(),
-                    categoryId = 1,
-                    priorityId = 1,
-                    color = Color.Red.toArgb()
-                )
-            )
-
-            _noteUseCases.upsertNote(
-                Note(
-                    noteId = 0,
-                    title = "Test Note 2",
-                    content = "This is the content for Test Note 2.",
-                    timestamp = System.currentTimeMillis(),
-                    categoryId = 1,
-                    priorityId = 2,
-                    color = Color.Blue.toArgb() // Light green color
-                )
-            )
-        }
+    fun toggleSearchBarVisibility() {
+        _isSearchBarVisible.value = !_isSearchBarVisible.value
     }
 
+    fun searchBarOnValueChange(value: String) {
+        _searchText.value = value
+    }
+
+    @SuppressLint("NewApi")
+    fun formatTimeStamp(timestamp: Long) : String {
+        val localDateTime = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(timestamp),
+            ZoneId.systemDefault()
+        )
+        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")
+        return localDateTime.format(formatter)
+    }
 
 }
