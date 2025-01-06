@@ -16,5 +16,6 @@ val Yellow = Color(0xFFEDF392)
 val Violet = Color(0xFFD1AEF3)
 val Green = Color(0xFFBDEFA0)
 
-val LightYellow = Color(0xFFFDFAC9)
+val Background = Color(0xFFe2eafc)
+val LightYellow = Color(0xFFF0F5C9)
 

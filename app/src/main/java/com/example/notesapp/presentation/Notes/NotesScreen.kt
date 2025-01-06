@@ -1,4 +1,5 @@
 package com.example.notesapp.presentation.notes
+import android.util.Log
 import com.example.notesapp.presentation.notes.composables.TopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,12 +33,13 @@ import com.example.notesapp.presentation.notes.NotesViewModel
 import com.example.notesapp.presentation.notes.composables.NotePreview
 import com.example.notesapp.presentation.notes.composables.SearchingBar
 import com.example.notesapp.presentation.notes.composables.SortMethodList
+import com.example.notesapp.ui.theme.Background
+import com.example.notesapp.ui.theme.LightYellow
 
 
 @Composable
 fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
-
-    val notes = viewModel.notes
+    val notes = viewModel.notes.collectAsState()
     val isMenuVisible = viewModel.isMenuVisible.collectAsState()
     val isSearchBarVisible = viewModel.isSearchBarVisible.collectAsState()
     val isSortMethodsVisible = viewModel.isSortMethodVisible.collectAsState()
@@ -46,7 +49,7 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
     val isDeleting = viewModel.isDeleting.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().background(Background)
     ) {
         TopBar(
           currentFilter = "All notes",
@@ -72,10 +75,6 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
             Text(
                 text = currentSortMethod.value,
                 style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                text = "|",
-                style = MaterialTheme.typography.bodyMedium
             )
             IconButton(
                 onClick = {viewModel.toggleSortDirection()},
@@ -104,7 +103,8 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
         LazyColumn (
             modifier = Modifier.fillMaxSize().padding(16.dp)
         ) {
-            items(notes.chunked(2)) { rowNotes ->
+            Log.d("Note list", notes.value.toString())
+            items(notes.value.chunked(2)) { rowNotes ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -112,6 +112,7 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     for (note in rowNotes) {
+                        Log.d("Note", note.title)
                         NotePreview(
                             note = note,
                             noteFormattedDate = viewModel.formatTimeStamp(note.timestamp),

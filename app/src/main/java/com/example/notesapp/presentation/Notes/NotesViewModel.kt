@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
@@ -24,8 +25,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases) : ViewModel() {
-    private val _notes = mutableStateListOf<Note>()
-    val notes: List<Note> = _notes
+    private val _notes = MutableStateFlow<List<Note>>(emptyList())
+    val notes: StateFlow<List<Note>> = _notes
+
+    private val _allNotes = MutableStateFlow<List<Note>>(emptyList())
 
     private val _isMenuVisible = MutableStateFlow(false)
     val isMenuVisible : StateFlow<Boolean> = _isMenuVisible
@@ -52,11 +55,13 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
         getNotes()
     }
 
+
     private fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)){
         viewModelScope.launch{
             _noteUseCases.getAllNotes(noteOrder).collect { noteList ->
-                _notes.clear()
-                _notes.addAll(noteList)
+                _notes.value = noteList
+                _allNotes.value = noteList
+                searchBarOnValueChange(_searchText.value)
             }
         }
     }
@@ -84,12 +89,21 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
 
     fun searchBarOnValueChange(value: String) {
         _searchText.value = value
+        if (value.isNotEmpty()) {
+            _notes.value =
+                _allNotes.value.filter {
+                    it.title.contains(value, ignoreCase = true) || it.content.contains(value, ignoreCase = true)
+        }
+        } else {
+            _notes.value = _allNotes.value
+        }
     }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
             _noteUseCases.deleteNotes(note)
-            _notes.remove(note)
+            _notes.value = notes.value.filter { it != note }
+            _allNotes.value = notes.value.filter { it != note }
         }
     }
 
