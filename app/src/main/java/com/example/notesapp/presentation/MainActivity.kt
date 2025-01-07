@@ -9,6 +9,7 @@ import com.example.notesapp.domain.models.Category
 import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.repositories.CategoryRepository
 import com.example.notesapp.domain.repositories.PriorityRepository
+import com.example.notesapp.presentation.CreateNote.CreateNoteScreen
 import com.example.notesapp.presentation.notes.NotesScreen
 import com.example.notesapp.ui.theme.NotesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             NotesAppTheme {
-                NotesScreen()
+                CreateNoteScreen()
             }
         }
     }

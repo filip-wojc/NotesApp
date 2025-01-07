@@ -1,0 +1,684 @@
+Index: app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteScreen.kt b/app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteScreen.kt
+new file mode 100644
+--- /dev/null	(date 1736215590626)
++++ b/app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteScreen.kt	(date 1736215590626)
+@@ -0,0 +1,184 @@
++package com.example.notesapp.presentation.CreateNote
++
++import android.hardware.lights.Light
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.foundation.text.BasicTextField
++import androidx.compose.material3.ButtonDefaults.shape
++import androidx.compose.material3.HorizontalDivider
++import androidx.compose.material3.Icon
++import androidx.compose.material3.IconButton
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.collectAsState
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.vector.ImageVector
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.res.vectorResource
++import androidx.compose.ui.text.TextStyle
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import androidx.hilt.navigation.compose.hiltViewModel
++import com.example.notesapp.R
++import com.example.notesapp.domain.models.Note
++import com.example.notesapp.ui.theme.*
++
++@Preview
++@Composable
++fun CreateNoteScreen(viewModel: CreateNoteViewModel = hiltViewModel()) {
++    val title = viewModel.title.collectAsState()
++    val description = viewModel.description.collectAsState()
++    val selectedColor = viewModel.selectedColor.collectAsState()
++    val colors = Note.colors
++    val rows = colors.chunked(7)
++    var isSaved by remember { mutableStateOf(false) }
++
++    Column(
++        modifier = Modifier
++            .fillMaxSize()
++            .background(selectedColor.value)
++            .padding(6.dp)
++    )
++    {
++
++
++        // Title
++        Row(
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(0.dp,2.dp),
++            verticalAlignment = Alignment.CenterVertically
++        )
++        {
++            IconButton(onClick = {  })
++            {
++                Icon(
++                    painter = painterResource(id = R.drawable.ic_back),
++                    contentDescription = "Back Arrow"
++                )
++            }
++
++            Box(modifier = Modifier.weight(1f))
++            {
++                BasicTextField(
++                    value = title.value,
++                    onValueChange = { viewModel.updateTitle(it) },
++                    textStyle = TextStyle(
++                        fontSize = 25.sp,
++                        color = Color.Black
++                    ),
++                    modifier = Modifier
++                        .align(Alignment.CenterStart)
++                        .padding(end = 50.dp)
++                )
++                Text(
++                    text = "${title.value.length}/30",
++                    fontSize = 12.sp,
++                    color = Color.Gray,
++                    modifier = Modifier.align(Alignment.CenterEnd)
++                )
++            }
++
++        }
++
++
++        HorizontalDivider(color = Black)
++        Spacer(modifier = Modifier.padding(2.dp))
++
++        // Color picker
++        rows.forEach { rowColors ->
++            Row(
++                modifier = Modifier
++                    .fillMaxWidth()
++                    .padding(vertical = 5.dp),
++                horizontalArrangement = Arrangement.SpaceEvenly
++            )
++            {
++                rowColors.forEach { color ->
++                    IconButton(
++                        onClick = { viewModel.updateColor(color) },
++                        modifier = Modifier
++                            .size(30.dp)
++                            .padding(1.dp)
++                    ) {
++                        Box(
++                            modifier = Modifier
++                                .size(30.dp)
++                                .background(color, shape = CircleShape)
++                                .border( // Add border here
++                                    width = 1.dp,
++                                    color = if (selectedColor.value == color) Color.White else Color.Black, // Highlight selected
++                                    shape = CircleShape
++                                )
++                        )
++                    }
++                }
++            }
++        }
++
++        Spacer(modifier = Modifier.padding(2.dp))
++        HorizontalDivider(color = Black)
++        // Description + save button
++        Box(
++            contentAlignment = Alignment.BottomEnd,
++            modifier = Modifier
++            .fillMaxSize()
++            .padding(end = 40.dp, bottom = 40.dp)
++        )
++        {
++            BasicTextField(
++                value = description.value,
++                onValueChange = { viewModel.updateDescription(it) },
++                modifier = Modifier
++                    .fillMaxSize()
++                    .padding(vertical = 10.dp, horizontal = 5.dp),
++                textStyle = TextStyle(
++                    fontSize = 15.sp,
++                    color = Color.Black
++                )
++            )
++
++            // Save icon button
++            Box(
++                modifier = Modifier
++                .size(width = 45.dp, height = 45.dp) // Set the size of the button
++                .background(Color.Transparent, shape = RoundedCornerShape(8.dp)) // Rounded rectangle shape
++                .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)) // Border
++                .clickable { isSaved = !isSaved }, // Toggle icon on click
++                contentAlignment = Alignment.Center // Center the icon
++            )
++            {
++                Icon(
++                    painter = painterResource(
++                        id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
++                    ),
++                    contentDescription = if (isSaved) "Saved" else "Save",
++                    tint = Color.Black,
++                    modifier = Modifier.size(35.dp) // Icon size
++                )
++            }
++        }
++
++    }
++
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/ui/theme/Color.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesapp.ui.theme\r\n\r\nimport androidx.compose.ui.graphics.Color\r\n\r\nval Purple80 = Color(0xFFD0BCFF)\r\nval PurpleGrey80 = Color(0xFFCCC2DC)\r\nval Pink80 = Color(0xFFEFB8C8)\r\n\r\nval Purple40 = Color(0xFF6650a4)\r\nval PurpleGrey40 = Color(0xFF625b71)\r\nval Pink40 = Color(0xFF7D5260)\r\n\r\nval Red = Color(0xFFEA4B4B)\r\nval Blue = Color(0xFF4867C7)\r\nval Yellow = Color(0xFFDFE552)\r\nval Violet = Color(0xFFC188EF)\r\nval Green = Color(0xFF91E870)\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/ui/theme/Color.kt b/app/src/main/java/com/example/notesapp/ui/theme/Color.kt
+--- a/app/src/main/java/com/example/notesapp/ui/theme/Color.kt	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/app/src/main/java/com/example/notesapp/ui/theme/Color.kt	(date 1736187889055)
+@@ -2,17 +2,45 @@
+ 
+ import androidx.compose.ui.graphics.Color
+ 
+-val Purple80 = Color(0xFFD0BCFF)
++
++
++
++
+ val PurpleGrey80 = Color(0xFFCCC2DC)
++val PurpleGrey40 = Color(0xFF625b71)
+ val Pink80 = Color(0xFFEFB8C8)
+-
++val Purple80 = Color(0xFFD0BCFF)
+ val Purple40 = Color(0xFF6650a4)
+-val PurpleGrey40 = Color(0xFF625b71)
+-val Pink40 = Color(0xFF7D5260)
++
++
++
++
++val Yellow = Color(0xFFffffba)
++val Orange = Color(0xFFffdfba)
++val DarkOrange = Color(0xFFFEBE8C)
++val Red = Color(0xFFffb3ba)
++val DarkRed = Color(0xFFC96868)
+ 
+-val Red = Color(0xFFEA4B4B)
+-val Blue = Color(0xFF4867C7)
+-val Yellow = Color(0xFFDFE552)
++val LightGreen = Color(0xFFbaffc9)
++val DarkGreen = Color(0xFF68c4af)
++
++val LightBlue = Color(0xFFbed4f0)
++val MediumBlue = Color(0xFF78DBF9)
++val DarkBlue = Color(0xFF4867C7)
++
++val BlueViolet = Color(0xFFc9c9ff)
+ val Violet = Color(0xFFC188EF)
+-val Green = Color(0xFF91E870)
++val DarkViolet = Color(0xFF4b2e83)
++
++val Black = Color(0xFF2c3539)
++
++
++
++
++
++
++
++
++
++
+ 
+Index: app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteViewModel.kt b/app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1736187753716)
++++ b/app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteViewModel.kt	(date 1736187753716)
+@@ -0,0 +1,6 @@
++package com.example.notesapp.presentation.EditNote
++
++class EditNoteViewModel{
++
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteViewModel.kt b/app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1736217790659)
++++ b/app/src/main/java/com/example/notesapp/presentation/CreateNote/CreateNoteViewModel.kt	(date 1736217790659)
+@@ -0,0 +1,95 @@
++package com.example.notesapp.presentation.CreateNote
++
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateListOf
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.graphics.Color
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.viewModelScope
++import com.example.notesapp.domain.models.Category
++import com.example.notesapp.domain.models.Priority
++import com.example.notesapp.domain.use_cases.categories.CategoryUseCases
++import com.example.notesapp.domain.use_cases.notes.NoteUseCases
++import dagger.hilt.android.lifecycle.HiltViewModel
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.StateFlow
++import kotlinx.coroutines.launch
++import javax.inject.Inject
++
++
++
++@HiltViewModel
++class CreateNoteViewModel @Inject constructor(private val _noteUseCases: NoteUseCases, private val _categoryUseCases: CategoryUseCases)  : ViewModel() {
++    private val _title = MutableStateFlow("")
++    val title : StateFlow<String> = _title
++
++    private val _description = MutableStateFlow("")
++    val description: StateFlow<String> = _description
++
++    private val _selectedColor = MutableStateFlow(Color.White) // Default color
++    val selectedColor: StateFlow<Color> = _selectedColor
++
++    private val _priorities = mutableStateListOf<Priority>()
++    val priorities: List<Priority> = _priorities
++
++    private val _categories = mutableStateListOf<Category>()
++    val categories: List<Category> = _categories
++
++    var selectedPriority by mutableStateOf("")
++    var selectedCategory by mutableStateOf("")
++
++    init {
++        val p1 = Priority("Low", 1)
++        val p2 = Priority("Medium", 2)
++        val p3 = Priority("High", 3)
++
++        val temp = mutableListOf(p1,p2,p3)
++
++        _priorities.clear()
++        _priorities.addAll(temp)
++    }
++
++    fun updateTitle(newTitle: String){
++        if (newTitle.length <= 30) { // Replace 50 with your desired character limit
++            _title.value = newTitle
++        }
++    }
++
++    fun updateDescription(newDescription: String){
++        _description.value = newDescription
++    }
++
++    fun updateColor(newColor: Color){
++        _selectedColor.value = newColor
++    }
++
++    fun fetchCategories() {
++        viewModelScope.launch {
++            _categoryUseCases.getAllCategories().collect{
++                categoriesList ->
++                _categories.clear()
++                _categories.addAll(categoriesList)
++            }
++
++        }
++    }
++
++
++
++    fun addCategory(newCategory: Category) {
++        viewModelScope.launch {
++            _categoryUseCases.upsertCategory(newCategory)
++            fetchCategories() // Refresh categories
++        }
++    }
++
++    fun updateSelectedPriority(priority: String) {
++        selectedPriority = priority
++    }
++
++    fun updateSelectedCategory(category: String) {
++        selectedCategory = category
++    }
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteScreen.kt b/app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteScreen.kt
+new file mode 100644
+--- /dev/null	(date 1736172372935)
++++ b/app/src/main/java/com/example/notesapp/presentation/EditNote/EditNoteScreen.kt	(date 1736172372935)
+@@ -0,0 +1,8 @@
++package com.example.notesapp.presentation.EditNote
++
++import androidx.compose.runtime.Composable
++
++@Composable
++fun EditNoteScreen() {
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/presentation/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesapp.presentation\r\n\r\nimport android.os.Bundle\r\nimport androidx.activity.ComponentActivity\r\nimport androidx.activity.compose.setContent\r\nimport androidx.compose.material3.Text\r\nimport androidx.lifecycle.lifecycleScope\r\nimport com.example.notesapp.domain.models.Category\r\nimport com.example.notesapp.domain.models.Priority\r\nimport com.example.notesapp.domain.repositories.CategoryRepository\r\nimport com.example.notesapp.domain.repositories.PriorityRepository\r\nimport com.example.notesapp.presentation.notes.NotesScreen\r\nimport com.example.notesapp.ui.theme.NotesAppTheme\r\nimport dagger.hilt.android.AndroidEntryPoint\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.Dispatchers\r\nimport kotlinx.coroutines.coroutineScope\r\nimport kotlinx.coroutines.launch\r\nimport javax.inject.Inject\r\n\r\n\r\n\r\n@AndroidEntryPoint\r\nclass MainActivity : ComponentActivity() {\r\n\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n\r\n        super.onCreate(savedInstanceState)\r\n\r\n        setContent {\r\n            NotesAppTheme {\r\n                NotesScreen()\r\n            }\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/presentation/MainActivity.kt b/app/src/main/java/com/example/notesapp/presentation/MainActivity.kt
+--- a/app/src/main/java/com/example/notesapp/presentation/MainActivity.kt	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/app/src/main/java/com/example/notesapp/presentation/MainActivity.kt	(date 1736178932000)
+@@ -9,6 +9,7 @@
+ import com.example.notesapp.domain.models.Priority
+ import com.example.notesapp.domain.repositories.CategoryRepository
+ import com.example.notesapp.domain.repositories.PriorityRepository
++import com.example.notesapp.presentation.CreateNote.CreateNoteScreen
+ import com.example.notesapp.presentation.notes.NotesScreen
+ import com.example.notesapp.ui.theme.NotesAppTheme
+ import dagger.hilt.android.AndroidEntryPoint
+@@ -30,7 +31,7 @@
+ 
+         setContent {
+             NotesAppTheme {
+-                NotesScreen()
++                CreateNoteScreen()
+             }
+         }
+     }
+Index: app/src/main/java/com/example/notesapp/presentation/CreateNote/composables/PickerDialog.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/presentation/CreateNote/composables/PickerDialog.kt b/app/src/main/java/com/example/notesapp/presentation/CreateNote/composables/PickerDialog.kt
+new file mode 100644
+--- /dev/null	(date 1736215848590)
++++ b/app/src/main/java/com/example/notesapp/presentation/CreateNote/composables/PickerDialog.kt	(date 1736215848590)
+@@ -0,0 +1,112 @@
++package com.example.notesapp.presentation.CreateNote.composables
++
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.height
++import androidx.compose.material3.AlertDialog
++import androidx.compose.material3.Button
++import androidx.compose.material3.DropdownMenu
++import androidx.compose.material3.DropdownMenuItem
++import androidx.compose.material3.Icon
++import androidx.compose.material3.IconButton
++import androidx.compose.material3.OutlinedTextField
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.unit.dp
++import com.example.notesapp.R
++
++@Composable
++fun PickerDialog(
++    onDismiss: () -> Unit,
++    onSave: (String, String) -> Unit,
++    priorities: List<String>,
++    categories: List<String>,
++    onAddCategory: (String) -> Unit
++) {
++    var selectedPriority by remember { mutableStateOf(priorities.firstOrNull() ?: "") }
++    var selectedCategory by remember { mutableStateOf(categories.firstOrNull() ?: "") }
++    var newCategory by remember { mutableStateOf("") }
++
++    AlertDialog(
++        onDismissRequest = { onDismiss() },
++        confirmButton = {
++            Button(
++                onClick = { onSave(selectedPriority, selectedCategory) }
++            ) {
++                Text("Save")
++            }
++        },
++        dismissButton = {
++            Button(onClick = { onDismiss() }) {
++                Text("Cancel")
++            }
++        },
++        title = { Text("Select Priority and Category") },
++        text = {
++            Column {
++
++                // Priority Picker
++                Text(text = "Priority")
++                DropdownMenu(
++                    expanded = true,
++                    onDismissRequest = { }
++                ) {
++                    priorities.forEach { priority ->
++                        DropdownMenuItem(
++                            text = { Text(priority) },
++                            onClick = {
++                                selectedPriority = priority
++                            }
++                        )
++                    }
++                }
++
++                Spacer(modifier = Modifier.height(10.dp))
++
++                // Category Picker
++                Text(text = "Category")
++                DropdownMenu(
++                    expanded = true,
++                    onDismissRequest = { }
++                ) {
++                    categories.forEach { category ->
++                        DropdownMenuItem(
++                            text = { Text(category) },
++                            onClick = {
++                                selectedCategory = category
++                            }
++                        )
++                    }
++                }
++
++                Spacer(modifier = Modifier.height(10.dp))
++
++                // Add New Category Input
++                OutlinedTextField(
++                    value = newCategory,
++                    onValueChange = { newCategory = it },
++                    label = { Text("Add New Category") },
++                    trailingIcon = {
++                        IconButton(onClick = {
++                            if (newCategory.isNotBlank()) {
++                                onAddCategory(newCategory)
++                                newCategory = ""
++                            }
++                        }) {
++                            Icon(
++                                painter = painterResource(id = R.drawable.ic_add),
++                                contentDescription = "Add Category"
++                            )
++                        }
++                    }
++                )
++            }
++        }
++    )
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/domain/models/Note.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesapp.domain.models\r\n\r\nimport androidx.room.Entity\r\nimport androidx.room.ForeignKey\r\nimport androidx.room.PrimaryKey\r\nimport com.example.notesapp.ui.theme.Blue\r\nimport com.example.notesapp.ui.theme.Green\r\nimport com.example.notesapp.ui.theme.Red\r\nimport com.example.notesapp.ui.theme.Violet\r\nimport com.example.notesapp.ui.theme.Yellow\r\n\r\n@Entity(\r\n    foreignKeys = [\r\n        ForeignKey(\r\n            entity = Category::class,\r\n            parentColumns = arrayOf(\"categoryId\"),\r\n            childColumns = arrayOf(\"categoryId\"),\r\n            onDelete = ForeignKey.CASCADE\r\n        ),\r\n        ForeignKey(\r\n            entity = Priority::class,\r\n            parentColumns = arrayOf(\"priorityId\"),\r\n            childColumns = arrayOf(\"priorityId\"),\r\n            onDelete = ForeignKey.CASCADE\r\n        )\r\n    ]\r\n)\r\ndata class Note (\r\n    val title: String,\r\n    val content: String,\r\n    val timestamp: Long,\r\n    val color: Int,\r\n    val categoryId: Int,\r\n    val priorityId: Int,\r\n    @PrimaryKey(autoGenerate = true)\r\n    val noteId: Int\r\n) {\r\n    companion object {\r\n        val colors = listOf(Red, Yellow, Green, Blue, Violet)\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/domain/models/Note.kt b/app/src/main/java/com/example/notesapp/domain/models/Note.kt
+--- a/app/src/main/java/com/example/notesapp/domain/models/Note.kt	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/app/src/main/java/com/example/notesapp/domain/models/Note.kt	(date 1736187743193)
+@@ -3,8 +3,18 @@
+ import androidx.room.Entity
+ import androidx.room.ForeignKey
+ import androidx.room.PrimaryKey
+-import com.example.notesapp.ui.theme.Blue
+-import com.example.notesapp.ui.theme.Green
++import com.example.notesapp.ui.theme.Black
++
++import com.example.notesapp.ui.theme.BlueViolet
++import com.example.notesapp.ui.theme.DarkBlue
++import com.example.notesapp.ui.theme.DarkGreen
++import com.example.notesapp.ui.theme.DarkOrange
++import com.example.notesapp.ui.theme.DarkRed
++import com.example.notesapp.ui.theme.DarkViolet
++import com.example.notesapp.ui.theme.LightBlue
++import com.example.notesapp.ui.theme.LightGreen
++import com.example.notesapp.ui.theme.MediumBlue
++import com.example.notesapp.ui.theme.Orange
+ import com.example.notesapp.ui.theme.Red
+ import com.example.notesapp.ui.theme.Violet
+ import com.example.notesapp.ui.theme.Yellow
+@@ -36,6 +46,7 @@
+     val noteId: Int
+ ) {
+     companion object {
+-        val colors = listOf(Red, Yellow, Green, Blue, Violet)
++        val colors = listOf(Yellow, Orange, DarkOrange, Red, DarkRed, LightGreen, DarkGreen,
++            LightBlue, BlueViolet, Violet, MediumBlue, DarkBlue, DarkViolet, Black)
+     }
+ }
+Index: app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetAllCategoriesUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesapp.domain.use_cases.categories\r\n\r\nimport com.example.notesapp.domain.repositories.CategoryRepository\r\n\r\nclass GetAllCategoriesUseCase (\r\n    private val repository: CategoryRepository\r\n) {\r\n    operator fun invoke() {\r\n        repository.getAllCategories()\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetAllCategoriesUseCase.kt b/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetAllCategoriesUseCase.kt
+--- a/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetAllCategoriesUseCase.kt	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetAllCategoriesUseCase.kt	(date 1736216917805)
+@@ -1,11 +1,13 @@
+ package com.example.notesapp.domain.use_cases.categories
+ 
++import com.example.notesapp.domain.models.Category
+ import com.example.notesapp.domain.repositories.CategoryRepository
++import kotlinx.coroutines.flow.Flow
+ 
+ class GetAllCategoriesUseCase (
+     private val repository: CategoryRepository
+ ) {
+-    operator fun invoke() {
+-        repository.getAllCategories()
++    operator fun invoke(): Flow<List<Category>> {
++        return repository.getAllCategories()
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetCategoryByIdUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesapp.domain.use_cases.categories\r\n\r\nimport com.example.notesapp.domain.repositories.CategoryRepository\r\n\r\nclass GetCategoryByIdUseCase(\r\n    private val repository: CategoryRepository\r\n) {\r\n    suspend operator fun invoke(id: Int) {\r\n        repository.getCategoryById(id)\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetCategoryByIdUseCase.kt b/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetCategoryByIdUseCase.kt
+--- a/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetCategoryByIdUseCase.kt	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/app/src/main/java/com/example/notesapp/domain/use_cases/categories/GetCategoryByIdUseCase.kt	(date 1736217322197)
+@@ -1,11 +1,12 @@
+ package com.example.notesapp.domain.use_cases.categories
+ 
++import com.example.notesapp.domain.models.Category
+ import com.example.notesapp.domain.repositories.CategoryRepository
+ 
+ class GetCategoryByIdUseCase(
+     private val repository: CategoryRepository
+ ) {
+-    suspend operator fun invoke(id: Int) {
+-        repository.getCategoryById(id)
++    suspend operator fun invoke(id: Int): Category? {
++        return repository.getCategoryById(id)
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/notesapp/ui/theme/Theme.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.notesapp.ui.theme\r\n\r\nimport android.app.Activity\r\nimport android.os.Build\r\nimport androidx.compose.foundation.isSystemInDarkTheme\r\nimport androidx.compose.material3.MaterialTheme\r\nimport androidx.compose.material3.darkColorScheme\r\nimport androidx.compose.material3.dynamicDarkColorScheme\r\nimport androidx.compose.material3.dynamicLightColorScheme\r\nimport androidx.compose.material3.lightColorScheme\r\nimport androidx.compose.runtime.Composable\r\nimport androidx.compose.ui.platform.LocalContext\r\n\r\nprivate val DarkColorScheme = darkColorScheme(\r\n    primary = Purple80,\r\n    secondary = PurpleGrey80,\r\n    tertiary = Pink80\r\n)\r\n\r\nprivate val LightColorScheme = lightColorScheme(\r\n    primary = Purple40,\r\n    secondary = PurpleGrey40,\r\n    tertiary = Pink40\r\n\r\n    /* Other default colors to override\r\n    background = Color(0xFFFFFBFE),\r\n    surface = Color(0xFFFFFBFE),\r\n    onPrimary = Color.White,\r\n    onSecondary = Color.White,\r\n    onTertiary = Color.White,\r\n    onBackground = Color(0xFF1C1B1F),\r\n    onSurface = Color(0xFF1C1B1F),\r\n    */\r\n)\r\n\r\n@Composable\r\nfun NotesAppTheme(\r\n    darkTheme: Boolean = isSystemInDarkTheme(),\r\n    // Dynamic color is available on Android 12+\r\n    dynamicColor: Boolean = true,\r\n    content: @Composable () -> Unit\r\n) {\r\n    val colorScheme = when {\r\n        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {\r\n            val context = LocalContext.current\r\n            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)\r\n        }\r\n\r\n        darkTheme -> DarkColorScheme\r\n        else -> LightColorScheme\r\n    }\r\n\r\n    MaterialTheme(\r\n        colorScheme = colorScheme,\r\n        typography = Typography,\r\n        content = content\r\n    )\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/notesapp/ui/theme/Theme.kt b/app/src/main/java/com/example/notesapp/ui/theme/Theme.kt
+--- a/app/src/main/java/com/example/notesapp/ui/theme/Theme.kt	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/app/src/main/java/com/example/notesapp/ui/theme/Theme.kt	(date 1736183922565)
+@@ -20,7 +20,7 @@
+ private val LightColorScheme = lightColorScheme(
+     primary = Purple40,
+     secondary = PurpleGrey40,
+-    tertiary = Pink40
++    tertiary = Pink80
+ 
+     /* Other default colors to override
+     background = Color(0xFFFFFBFE),
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetSelector\">\r\n    <selectionStates>\r\n      <SelectionState runConfigName=\"app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DropdownSelection timestamp=\"2025-01-06T12:56:00.554791100Z\">\r\n          <Target type=\"DEFAULT_BOOT\">\r\n            <handle>\r\n              <DeviceId pluginId=\"LocalEmulator\" identifier=\"path=C:\\Users\\filip\\.android\\avd\\Medium_Phone_API_35.avd\" />\r\n            </handle>\r\n          </Target>\r\n        </DropdownSelection>\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"NotePreview\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n    </selectionStates>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+--- a/.idea/deploymentTargetSelector.xml	(revision 344a151a81285669f56f8aa9ae946cb58776ef1f)
++++ b/.idea/deploymentTargetSelector.xml	(date 1736172498756)
+@@ -13,9 +13,6 @@
+         </DropdownSelection>
+         <DialogSelection />
+       </SelectionState>
+-      <SelectionState runConfigName="NotePreview">
+-        <option name="selectionMode" value="DROPDOWN" />
+-      </SelectionState>
+     </selectionStates>
+   </component>
+ </project>
+\ No newline at end of file
