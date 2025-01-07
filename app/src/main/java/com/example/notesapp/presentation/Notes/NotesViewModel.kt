@@ -9,7 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.notesapp.domain.models.Category
 import com.example.notesapp.domain.models.Note
+import com.example.notesapp.domain.use_cases.categories.CategoryUseCases
 import com.example.notesapp.domain.use_cases.notes.NoteUseCases
 import com.example.notesapp.domain.utils.NoteOrder
 import com.example.notesapp.domain.utils.OrderType
@@ -24,14 +26,14 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases) : ViewModel() {
+class NotesViewModel @Inject constructor(
+    private val _noteUseCases: NoteUseCases,
+    private val _categoryUseCases: CategoryUseCases
+) : ViewModel() {
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> = _notes
 
     private val _allNotes = MutableStateFlow<List<Note>>(emptyList())
-
-    private val _isMenuVisible = MutableStateFlow(false)
-    val isMenuVisible : StateFlow<Boolean> = _isMenuVisible
 
     private val _isSearchBarVisible = MutableStateFlow(false)
     val isSearchBarVisible : StateFlow<Boolean> = _isSearchBarVisible
@@ -51,23 +53,53 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
     private val _isDeleting = MutableStateFlow(false)
     val isDeleting : StateFlow<Boolean> = _isDeleting
 
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    val categories: StateFlow<List<Category>> = _categories
+
+    private val _defaultCategory = Category("All Notes", 0)
+
+    private val _currentCategory = MutableStateFlow(_defaultCategory)
+    val currentCategory : StateFlow<Category> = _currentCategory
+
     init {
         getNotes()
+        getCategories()
     }
 
 
-    private fun getNotes(noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending)){
+    fun getNotes(){
         viewModelScope.launch{
-            _noteUseCases.getAllNotes(noteOrder).collect { noteList ->
+            _noteUseCases.getAllNotes(
+                noteOrder = gerOrderType()
+            ).collect { noteList ->
                 _notes.value = noteList
                 _allNotes.value = noteList
                 searchBarOnValueChange(_searchText.value)
+                _currentCategory.value = _defaultCategory
             }
         }
     }
 
-    fun toggleMenuVisibility() {
-        _isMenuVisible.value = !_isMenuVisible.value
+    private fun getCategories() {
+        viewModelScope.launch {
+            _categoryUseCases.getAllCategories().collect { categoryList ->
+                _categories.value = categoryList
+            }
+        }
+    }
+
+    fun getNotesByCategory(category: Category) {
+        viewModelScope.launch {
+            _noteUseCases.getNotesByCategory(
+                noteOrder = gerOrderType(),
+                categoryId = category.categoryId
+            ).collect { noteList ->
+                _notes.value = noteList
+                _allNotes.value = noteList
+                searchBarOnValueChange(_searchText.value)
+                _currentCategory.value = category
+            }
+        }
     }
 
     fun toggleSearchBarVisibility() {
@@ -84,7 +116,12 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
 
     fun toggleSortDirection() {
         _isOrderDescending.value = !_isOrderDescending.value
-        getNotes(gerOrderType())
+        if (_currentCategory.value.name != "All Notes") {
+            getNotesByCategory(_currentCategory.value)
+        }
+        else {
+            getNotes()
+        }
     }
 
     fun searchBarOnValueChange(value: String) {
@@ -109,7 +146,12 @@ class NotesViewModel @Inject constructor(private val _noteUseCases: NoteUseCases
 
     fun onSelectedSort(sortMethod: String) {
         _currentSortMethod.value = sortMethod
-        getNotes(gerOrderType())
+        if (_currentCategory.value.name != "All Notes") {
+            getNotesByCategory(_currentCategory.value)
+        }
+        else {
+            getNotes()
+        }
     }
 
     private fun gerOrderType() : NoteOrder {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,11 +28,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Delete
 import com.example.notesapp.domain.models.Note
@@ -60,17 +63,37 @@ fun NotePreview(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row (
-                Modifier.fillMaxWidth()
-            ){
+            Box(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = note.content,
                     maxLines = 6,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxWidth()
                 )
+
+                if (isDeleting) {
+                    IconButton(
+                        onClick = { onDelete(note) },
+                        modifier = Modifier
+                            .zIndex(1f)
+                            .absoluteOffset(x = 30.dp, y = (-20).dp)
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(constraints)
+                                layout(0, 0) {
+                                    placeable.place(220, -20)
+                                }
+                            }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Delete",
+                        )
+                    }
+                }
             }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -90,16 +113,6 @@ fun NotePreview(
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray,
                         textAlign = TextAlign.Center
-                    )
-                }
-            }
-            if (isDeleting) {
-                IconButton(
-                    onClick = {onDelete(note)},
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Delete"
                     )
                 }
             }

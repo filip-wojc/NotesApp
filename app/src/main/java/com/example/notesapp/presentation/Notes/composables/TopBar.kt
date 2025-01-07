@@ -16,7 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
+import com.example.notesapp.R
 
 @Composable
 fun TopBar(
@@ -25,7 +27,8 @@ fun TopBar(
     toggleMenuVisibility: () -> Unit,
     toggleSearchBarVisibility: () -> Unit,
     toggleDeleting: () -> Unit,
-    isDeleting: Boolean
+    isDeleting: Boolean,
+    isSearching: Boolean
 ) {
     Row (
         modifier.fillMaxWidth(),
@@ -53,10 +56,17 @@ fun TopBar(
             IconButton(
                 onClick = toggleSearchBarVisibility,
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Toogle Searching"
-                )
+                if (!isSearching) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Toogle Searching"
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_search_off_24),
+                        contentDescription = "Toogl"
+                    )
+                }
             }
             IconButton(
                 onClick = toggleDeleting,
