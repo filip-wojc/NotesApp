@@ -3,16 +3,20 @@ import android.util.Log
 import com.example.notesapp.presentation.notes.composables.TopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
@@ -39,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesapp.R
 import com.example.notesapp.domain.models.Category
@@ -64,7 +69,6 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
     val categories = viewModel.categories.collectAsState()
     val currentCategory = viewModel.currentCategory.collectAsState()
 
-    // Stan dla Drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -126,7 +130,6 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                 isSearching = isSearchBarVisible.value
             )
 
-            // Sortowanie i wyszukiwanie
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -156,7 +159,8 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
 
             if (isSortMethodsVisible.value) {
                 SortMethodList(
-                    onSelectSort = { viewModel.onSelectedSort(it) }
+                    onSelectSort = { viewModel.onSelectedSort(it) },
+                    currentSort = currentSortMethod.value
                 )
             }
 
@@ -167,34 +171,52 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                     onValueChange = { viewModel.searchBarOnValueChange(it) }
                 )
             }
-
-            // Lista notatek
-            LazyColumn(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .background(Background)
             ) {
-                items(notes.value.chunked(2)) { rowNotes ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        for (note in rowNotes) {
-                            NotePreview(
-                                note = note,
-                                noteFormattedDate = viewModel.formatTimeStamp(note.timestamp),
-                                modifier = Modifier.weight(1f),
-                                isDeleting = isDeleting.value,
-                                onDelete = { viewModel.deleteNote(note) },
-                                onClick = {}
-                            )
-                        }
-                        if (rowNotes.size < 2) {
-                            Spacer(modifier = Modifier.weight(1f))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    items(notes.value.chunked(2)) { rowNotes ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            for (note in rowNotes) {
+                                NotePreview(
+                                    note = note,
+                                    noteFormattedDate = viewModel.formatTimeStamp(note.timestamp),
+                                    modifier = Modifier.weight(1f),
+                                    isDeleting = isDeleting.value,
+                                    onDelete = { viewModel.deleteNote(note) },
+                                    onClick = {/* TODO: NAWIGACJA DO SZCZEGÓŁÓW NOTATKI */}
+                                )
+                            }
+                            if (rowNotes.size < 2) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
+                }
+                IconButton (
+                    onClick = { /* TODO: NAWIGACJA DO DODANIA NOTATKI */},
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(48.dp)
+                        .background(Color.White, CircleShape)
+                        .zIndex(1f)
+                        .size(60.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add note",
+                    )
                 }
             }
         }
