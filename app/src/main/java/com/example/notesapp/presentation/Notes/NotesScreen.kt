@@ -1,5 +1,10 @@
 package com.example.notesapp.presentation.notes
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import com.example.notesapp.presentation.notes.composables.TopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -157,7 +162,10 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                 }
             }
 
-            if (isSortMethodsVisible.value) {
+            AnimatedVisibility(
+                visible = isSortMethodsVisible.value,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -170,15 +178,17 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                 }
             }
 
-
-
-            if (isSearchBarVisible.value) {
+            AnimatedVisibility(
+                visible = isSearchBarVisible.value,
+                enter = slideInVertically(),
+            ) {
                 SearchingBar(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     value = searchText.value,
                     onValueChange = { viewModel.searchBarOnValueChange(it) }
                 )
             }
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
