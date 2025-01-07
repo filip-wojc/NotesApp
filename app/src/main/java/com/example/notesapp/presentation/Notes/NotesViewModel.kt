@@ -139,8 +139,12 @@ class NotesViewModel @Inject constructor(
     fun deleteNote(note: Note) {
         viewModelScope.launch {
             _noteUseCases.deleteNotes(note)
-            _notes.value = notes.value.filter { it != note }
-            _allNotes.value = notes.value.filter { it != note }
+            if (_currentCategory.value.name != "All Notes") {
+                getNotesByCategory(_currentCategory.value)
+            }
+            else {
+                getNotes()
+            }
         }
     }
 
