@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,31 +27,61 @@ fun SortMethodList(
     onSelectSort: (word: String) -> Unit,
     currentSort: String
 ) {
-    val sortMethods = listOf("Title", "Date", "Color", "Priority", "Category")
-    Row (
+    val sortMethods1 = listOf("Title", "Date", "Color")
+    val sortMethods2 = listOf("Priority", "Category")
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ){
-        sortMethods.forEach {
-            val border = if (currentSort == it) 1.dp else 0.dp
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(LightYellow, RoundedCornerShape(12.dp))
-                    .then(
-                        if (border > 0.dp) Modifier.border(width = border, Color.Black, RoundedCornerShape(12.dp))
-                        else Modifier
-                    )
-                    .clickable {onSelectSort(it)}
-                    .padding(vertical = 8.dp, horizontal = 10.dp)
-            ) {
-                Text(
-                    text = it,
-                )
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            sortMethods1.forEach { method ->
+                val isSelected = currentSort == method
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(LightYellow, RoundedCornerShape(12.dp))
+                        .then(
+                            if (isSelected) Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))
+                            else Modifier
+                        )
+                        .clickable { onSelectSort(method) }
+                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                ) {
+                    Text(text = method)
+                }
             }
+        }
 
+        Spacer(modifier = Modifier.padding(6.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            sortMethods2.forEach { method ->
+                val isSelected = currentSort == method
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(LightYellow, RoundedCornerShape(12.dp))
+                        .then(
+                            if (isSelected) Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))
+                            else Modifier
+                        )
+                        .clickable { onSelectSort(method) }
+                        .padding(vertical = 8.dp, horizontal = 10.dp)
+                ) {
+                    Text(text = method)
+                }
+            }
         }
     }
 }
+
+

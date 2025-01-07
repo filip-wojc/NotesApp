@@ -117,7 +117,7 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background)
+                .background(Background),
         ) {
             TopBar(
                 currentFilter = currentCategory.value.name,
@@ -158,11 +158,19 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
             }
 
             if (isSortMethodsVisible.value) {
-                SortMethodList(
-                    onSelectSort = { viewModel.onSelectedSort(it) },
-                    currentSort = currentSortMethod.value
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SortMethodList(
+                        onSelectSort = { viewModel.onSelectedSort(it) },
+                        currentSort = currentSortMethod.value
+                    )
+                }
             }
+
+
 
             if (isSearchBarVisible.value) {
                 SearchingBar(
