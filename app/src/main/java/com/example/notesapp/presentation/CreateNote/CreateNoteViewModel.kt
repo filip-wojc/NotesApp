@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notesapp.domain.models.Category
+import com.example.notesapp.domain.models.Note
 import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.use_cases.categories.CategoryUseCases
 import com.example.notesapp.domain.use_cases.notes.NoteUseCases
@@ -59,6 +61,14 @@ class CreateNoteViewModel @Inject constructor(private val _noteUseCases: NoteUse
         _selectedColor.value = newColor
     }
 
+    fun updateSelectedPriority(priority: Priority) {
+        selectedPriority = priority
+    }
+
+    fun updateSelectedCategory(category: Category) {
+        selectedCategory = category
+    }
+
     fun fetchCategories() {
         viewModelScope.launch {
             _categoryUseCases.getAllCategories().collect{
@@ -84,8 +94,6 @@ class CreateNoteViewModel @Inject constructor(private val _noteUseCases: NoteUse
 
     }
 
-
-
     fun addCategory(newCategory: Category) {
         viewModelScope.launch {
             _categoryUseCases.upsertCategory(newCategory)
@@ -93,12 +101,22 @@ class CreateNoteViewModel @Inject constructor(private val _noteUseCases: NoteUse
         }
     }
 
-    fun updateSelectedPriority(priority: Priority) {
-        selectedPriority = priority
+    fun saveNote(){
+        val note = Note(
+            _title.value,
+            _description.value,
+            System.currentTimeMillis(),
+            _selectedColor.value.toArgb(),
+            selectedCategory.categoryId,
+            selectedPriority.priorityId,
+            0
+            )
+
+        viewModelScope.launch {
+            _noteUseCases.upsertNote(note)
+        }
     }
 
-    fun updateSelectedCategory(category: Category) {
-        selectedCategory = category
-    }
+
 
 }
