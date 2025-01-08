@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -106,9 +107,10 @@ fun NotePreview(
                 Column {
                     Text(
                         text = note.title,
-                        style = MaterialTheme.typography.titleMedium,)
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
-
                     Text(
                         text = noteFormattedDate,
                         style = MaterialTheme.typography.bodySmall,
