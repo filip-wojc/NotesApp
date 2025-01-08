@@ -50,8 +50,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.notesapp.R
 import com.example.notesapp.domain.models.Category
+import com.example.notesapp.presentation.CreateNoteScreen
 import com.example.notesapp.presentation.notes.NotesViewModel
 import com.example.notesapp.presentation.notes.composables.NotePreview
 import com.example.notesapp.presentation.notes.composables.SearchingBar
@@ -63,7 +65,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
+fun NotesScreen(
+    viewModel: NotesViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val notes = viewModel.notes.collectAsState()
     val isDeleting = viewModel.isDeleting.collectAsState()
     val searchText = viewModel.searchText.collectAsState()
@@ -223,7 +228,7 @@ fun NotesScreen(viewModel: NotesViewModel = hiltViewModel()) {
                     }
                 }
                 IconButton (
-                    onClick = { /* TODO: NAWIGACJA DO DODANIA NOTATKI */},
+                    onClick = {navController.navigate(CreateNoteScreen.route)},
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(48.dp)

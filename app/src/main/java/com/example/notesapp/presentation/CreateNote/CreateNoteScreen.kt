@@ -38,14 +38,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.notesapp.R
 import com.example.notesapp.domain.models.Note
 import com.example.notesapp.presentation.CreateNote.composables.PickerDialog
 import com.example.notesapp.ui.theme.*
 
-@Preview
+
 @Composable
-fun CreateNoteScreen(viewModel: CreateNoteViewModel = hiltViewModel()) {
+fun CreateNoteScreen(
+    viewModel: CreateNoteViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val title = viewModel.title.collectAsState()
     val description = viewModel.description.collectAsState()
     val selectedColor = viewModel.selectedColor.collectAsState()
@@ -75,7 +79,7 @@ fun CreateNoteScreen(viewModel: CreateNoteViewModel = hiltViewModel()) {
             verticalAlignment = Alignment.CenterVertically
         )
         {
-            IconButton(onClick = {  })
+            IconButton(onClick = {navController.popBackStack()})
             {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
@@ -192,6 +196,7 @@ fun CreateNoteScreen(viewModel: CreateNoteViewModel = hiltViewModel()) {
             onSave = { priority, category ->
                 viewModel.updateSelectedPriority(priority)
                 viewModel.updateSelectedCategory(category)
+
                 showDialog = false
             },
             priorities = priorities,

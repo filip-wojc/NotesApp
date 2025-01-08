@@ -79,7 +79,7 @@ fun NotePreview(
                         onClick = { onDelete(note) },
                         modifier = Modifier
                             .zIndex(1f)
-                            .absoluteOffset(x = 30.dp, y = (-20).dp)
+                            .absoluteOffset(x = 35.dp, y = (-20).dp)
                             .layout { measurable, constraints ->
                                 val placeable = measurable.measure(constraints)
                                 layout(0, 0) {
