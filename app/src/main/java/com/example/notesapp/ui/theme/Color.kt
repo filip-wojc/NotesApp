@@ -24,9 +24,11 @@ val LightBlue = Color(0xFFbed4f0)
 val MediumBlue = Color(0xFF78DBF9)
 val DarkBlue = Color(0xFF4867C7)
 
+val White = Color
 val BlueViolet = Color(0xFFc9c9ff)
 val Violet = Color(0xFFC188EF)
 val DarkViolet = Color(0xFF4b2e83)
+val Grey = Color(0xFFA6AEBF)
 
 val Black = Color(0xFF2c3539)
 

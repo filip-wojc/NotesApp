@@ -218,7 +218,7 @@ fun NotesScreen(
                                     modifier = Modifier.weight(1f),
                                     isDeleting = isDeleting.value,
                                     onDelete = { viewModel.deleteNote(note) },
-                                    onClick = {/* TODO: NAWIGACJA DO SZCZEGÓŁÓW NOTATKI */}
+                                    onClick = {navController.navigate("editNoteScreen/${note.noteId}")}
                                 )
                             }
                             if (rowNotes.size < 2) {

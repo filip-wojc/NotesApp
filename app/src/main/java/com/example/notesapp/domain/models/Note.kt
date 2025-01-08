@@ -11,6 +11,7 @@ import com.example.notesapp.ui.theme.DarkGreen
 import com.example.notesapp.ui.theme.DarkOrange
 import com.example.notesapp.ui.theme.DarkRed
 import com.example.notesapp.ui.theme.DarkViolet
+import com.example.notesapp.ui.theme.Grey
 import com.example.notesapp.ui.theme.LightBlue
 import com.example.notesapp.ui.theme.LightGreen
 import com.example.notesapp.ui.theme.MediumBlue
@@ -47,6 +48,6 @@ data class Note (
 ) {
     companion object {
         val colors = listOf(Yellow, Orange, DarkOrange, Red, DarkRed, LightGreen, DarkGreen,
-            LightBlue, BlueViolet, Violet, MediumBlue, DarkBlue, DarkViolet, Black)
+            LightBlue, BlueViolet, Violet, MediumBlue, DarkBlue, DarkViolet, Grey)
     }
 }

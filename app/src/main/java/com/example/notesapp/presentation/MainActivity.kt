@@ -10,9 +10,11 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.Text
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.notesapp.domain.models.Category
 import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.repositories.CategoryRepository
@@ -22,7 +24,7 @@ import com.example.notesapp.presentation.notes.NotesScreen
 import com.example.notesapp.ui.theme.NotesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
-
+import com.example.notesapp.presentation.EditNote.EditNoteScreen
 
 
 
@@ -74,6 +76,17 @@ class MainActivity : ComponentActivity() {
                     ) {
                         CreateNoteScreen(navController = navController)
                     }
+
+                    composable(
+                        route = EditNoteScreen.route,
+                        arguments = listOf(navArgument("noteId") { type = NavType.IntType }) // Specify argument type
+                    ) { backStackEntry ->
+                        val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0 // Retrieve argument
+                        EditNoteScreen(
+                            navController = navController,
+                            noteId = noteId
+                        ) // Pass it to the screen
+                    }
                 }
 
             }
@@ -89,4 +102,9 @@ object NoteListScreen {
 @Serializable
 object CreateNoteScreen {
     const val route = "createNoteScreen"
+}
+
+@Serializable
+object EditNoteScreen {
+    const val route = "editNoteScreen/{noteId}" // Argument placeholder
 }
