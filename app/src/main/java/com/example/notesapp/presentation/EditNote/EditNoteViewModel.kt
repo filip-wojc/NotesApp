@@ -13,6 +13,7 @@ import com.example.notesapp.domain.models.Note
 import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.use_cases.categories.CategoryUseCases
 import com.example.notesapp.domain.use_cases.notes.NoteUseCases
+import com.example.notesapp.domain.utils.VoiceToTextParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditNoteViewModel @Inject constructor(private val _noteUseCases: NoteUseCases, private val _categoryUseCases: CategoryUseCases)  : ViewModel() {
+class EditNoteViewModel @Inject constructor(
+    private val _noteUseCases: NoteUseCases,
+    private val _categoryUseCases: CategoryUseCases,
+    val voiceToTextParser: VoiceToTextParser
+)  : ViewModel() {
     private val _title = MutableStateFlow("")
     val title : StateFlow<String> = _title
 
@@ -55,6 +60,23 @@ class EditNoteViewModel @Inject constructor(private val _noteUseCases: NoteUseCa
 
     fun updateDescription(newDescription: String){
         _description.value = newDescription
+    }
+
+    fun updateDescriptionWithVoice(newText: String) {
+        if (newText.lowercase() == "clear description") {
+            _description.value = ""
+        }
+
+        else if (newText.lowercase() == "clear title") {
+            _title.value = ""
+        }
+
+        else if (!_description.value.endsWith(" ") && _description.value.isNotEmpty()) {
+            _description.value += " $newText"
+        }
+        else {
+            _description.value += newText
+        }
     }
 
     fun updateColor(newColor: Color){

@@ -1,6 +1,12 @@
 package com.example.notesapp.presentation
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
@@ -9,6 +15,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.Text
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,7 +32,6 @@ import com.example.notesapp.ui.theme.NotesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 import com.example.notesapp.presentation.EditNote.EditNoteScreen
-
 
 
 @AndroidEntryPoint
@@ -92,6 +98,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 @Serializable

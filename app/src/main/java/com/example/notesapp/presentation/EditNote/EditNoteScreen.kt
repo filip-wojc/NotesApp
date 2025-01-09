@@ -1,5 +1,8 @@
 package com.example.notesapp.presentation.EditNote
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -29,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -47,6 +52,36 @@ fun EditNoteScreen(
     viewModel: EditNoteViewModel = hiltViewModel(),
     navController: NavController
 ) {
+
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (!isGranted) {
+                viewModel.voiceToTextParser.updateState {
+                    it.copy(error = "Permission for microphone is required")
+                }
+
+            }
+        }
+    )
+
+    val context = LocalContext.current
+    val hasPermission = remember {
+        androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.RECORD_AUDIO
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    }
+
+    if (!hasPermission) {
+        LaunchedEffect(Unit) {
+            requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+
+
     // Fetch the note info only once when the screen is created
     LaunchedEffect(noteId) {
         viewModel.loadNoteInfo(noteId)
@@ -63,6 +98,14 @@ fun EditNoteScreen(
     val rows = colors.chunked(7)
     var showDialog by remember { mutableStateOf(false) }
     var isSaved by remember { mutableStateOf(false) }
+
+    val speechState by viewModel.voiceToTextParser.state.collectAsState()
+
+    LaunchedEffect(speechState.spokenText) {
+        if (speechState.spokenText.isNotEmpty()) {
+            viewModel.updateDescriptionWithVoice(speechState.spokenText)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -154,7 +197,7 @@ fun EditNoteScreen(
             contentAlignment = Alignment.BottomEnd,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(end = 40.dp, bottom = 40.dp)
+                .padding(bottom = 40.dp)
         )
         {
             BasicTextField(
@@ -169,25 +212,57 @@ fun EditNoteScreen(
                 )
             )
 
-            // Save icon button
-            Box(
-                modifier = Modifier
-                    .size(width = 45.dp, height = 45.dp) // Set the size of the button
-                    .background(Color.Transparent, shape = RoundedCornerShape(8.dp)) // Rounded rectangle shape
-                    .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)) // Border
-                    .clickable { showDialog = true }, // Toggle icon on click
-                contentAlignment = Alignment.Center // Center the icon
-            )
-            {
-                Icon(
-                    painter = painterResource(
-                        id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
-                    ),
-                    contentDescription = if (isSaved) "Saved" else "Save",
-                    tint = Color.Black,
-                    modifier = Modifier.size(35.dp) // Icon size
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ){
+
+                Spacer(Modifier.width(45.dp))
+
+                IconButton(
+                    onClick = {
+                        if (speechState.isSpeaking) {
+                            viewModel.voiceToTextParser.stopListening()
+                        }
+                        else {
+                            viewModel.voiceToTextParser.startListening("en")
+                        }
+                    }
+                ) {
+                    AnimatedContent(
+                        targetState = speechState.isSpeaking,
+                        modifier = Modifier.size(width = 45.dp, height = 45.dp)
+                    ) {isSpeaking ->
+                        if (isSpeaking) {
+                            Icon(painter = painterResource(R.drawable.baseline_mic_off_24), contentDescription = "Stop button")
+                        } else {
+                            Icon(painter = painterResource(R.drawable.baseline_mic_24), contentDescription = "Start button")
+                        }
+                    }
+                }
+
+
+                Box(
+                    modifier = Modifier
+                        .size(width = 45.dp, height = 45.dp) // Set the size of the button
+                        .background(Color.Transparent, shape = RoundedCornerShape(8.dp)) // Rounded rectangle shape
+                        .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)) // Border
+                        .clickable { showDialog = true }, // Toggle icon on click
+                    contentAlignment = Alignment.Center // Center the icon
                 )
+                {
+                    Icon(
+                        painter = painterResource(
+                            id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
+                        ),
+                        contentDescription = if (isSaved) "Saved" else "Save",
+                        tint = Color.Black,
+                        modifier = Modifier.size(35.dp) // Icon size
+                    )
+                }
+
             }
+
         }
 
     }

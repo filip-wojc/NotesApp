@@ -15,6 +15,7 @@ import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.use_cases.categories.CategoryUseCases
 import com.example.notesapp.domain.use_cases.notes.NoteUseCases
 import com.example.notesapp.domain.use_cases.priorities.PriorityUseCases
+import com.example.notesapp.domain.utils.VoiceToTextParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,8 @@ import javax.inject.Inject
 class CreateNoteViewModel @Inject constructor(
     private val _noteUseCases: NoteUseCases,
     private val _categoryUseCases: CategoryUseCases,
-    private val _priorityUseCases: PriorityUseCases
+    private val _priorityUseCases: PriorityUseCases,
+    val voiceToTextParser: VoiceToTextParser
 ): ViewModel() {
 
     private val _title = MutableStateFlow("")
@@ -51,7 +53,6 @@ class CreateNoteViewModel @Inject constructor(
     init {
         fetchCategories()
         fetchPriorities()
-
     }
 
     fun updateTitle(newTitle: String){
@@ -62,6 +63,23 @@ class CreateNoteViewModel @Inject constructor(
 
     fun updateDescription(newDescription: String){
         _description.value = newDescription
+    }
+
+    fun updateDescriptionWithVoice(newText: String) {
+        if (newText.lowercase() == "clear description") {
+            _description.value = ""
+        }
+
+        else if (newText.lowercase() == "clear title") {
+            _title.value = ""
+        }
+
+        else if (!_description.value.endsWith(" ") && _description.value.isNotEmpty()) {
+            _description.value += " $newText"
+        }
+        else {
+            _description.value += newText
+        }
     }
 
     fun updateColor(newColor: Color){

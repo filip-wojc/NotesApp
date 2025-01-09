@@ -3,6 +3,7 @@ package com.example.notesapp.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
 import com.example.notesapp.database.NoteDatabase
 import com.example.notesapp.database.repositories.CategoryRepositoryImpl
 import com.example.notesapp.database.repositories.NoteRepositoryImpl
@@ -25,6 +26,7 @@ import com.example.notesapp.domain.use_cases.priorities.DeletePriorityUseCase
 import com.example.notesapp.domain.use_cases.priorities.GetAllPrioritiesUseCase
 import com.example.notesapp.domain.use_cases.priorities.PriorityUseCases
 import com.example.notesapp.domain.use_cases.priorities.UpsertPriorityUseCase
+import com.example.notesapp.domain.utils.VoiceToTextParser
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -97,6 +99,14 @@ object AppModule {
             upsertPriority = UpsertPriorityUseCase(repository),
             deletePriority = DeletePriorityUseCase(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideVoiceParser(
+        @ApplicationContext app: Context
+    ) : VoiceToTextParser{
+        return VoiceToTextParser(app)
     }
 
 }
