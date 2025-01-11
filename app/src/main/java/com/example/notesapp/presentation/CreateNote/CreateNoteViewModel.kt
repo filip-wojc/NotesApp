@@ -50,6 +50,10 @@ class CreateNoteViewModel @Inject constructor(
     var selectedPriority by mutableStateOf(Priority("",0))
     var selectedCategory by mutableStateOf(Category("",0))
 
+    private val _reminderTime = mutableStateOf<Long?>(null) // dont share with screen, read-only
+
+
+
     init {
         fetchCategories()
         fetchPriorities()
@@ -96,6 +100,11 @@ class CreateNoteViewModel @Inject constructor(
         Log.d("SelectedCategoryChangedTo", "ChangedToName:${selectedCategory.name},Id:${selectedCategory.categoryId}")
     }
 
+    fun updateReminderTime(time: Long?){
+        _reminderTime.value = time
+    }
+
+    // TODO: Move to home screen
     fun fetchCategories() {
         viewModelScope.launch {
             _categoryUseCases.getAllCategories().collect{ fetchedCategories ->
@@ -155,6 +164,7 @@ class CreateNoteViewModel @Inject constructor(
             _title.value,
             _description.value,
             System.currentTimeMillis(),
+            _reminderTime.value,
             _selectedColor.value.toArgb(),
             selectedCategory.categoryId,
             selectedPriority.priorityId,

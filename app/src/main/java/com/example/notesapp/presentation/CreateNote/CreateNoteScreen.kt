@@ -1,5 +1,6 @@
 package com.example.notesapp.presentation.CreateNote
 
+import androidx.compose.animation.animateContentSize
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -11,10 +12,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -96,6 +100,7 @@ fun CreateNoteScreen(
     var showDialog by remember { mutableStateOf(false) }
     var isSaved by remember { mutableStateOf(false) }
 
+
     val speechState by viewModel.voiceToTextParser.state.collectAsState()
 
     LaunchedEffect(speechState.spokenText) {
@@ -109,6 +114,7 @@ fun CreateNoteScreen(
             .fillMaxSize()
             .background(selectedColor.value)
             .padding(6.dp)
+            .windowInsetsPadding(WindowInsets.ime) // Adjust padding for the keyboard
     )
     {
 
@@ -194,6 +200,8 @@ fun CreateNoteScreen(
             contentAlignment = Alignment.BottomEnd,
             modifier = Modifier
             .fillMaxSize()
+
+
             .padding(bottom = 40.dp)
         )
         {
@@ -208,6 +216,9 @@ fun CreateNoteScreen(
                     color = Color.Black
                 )
             )
+
+            // Warcrime: potrzeba boxa wokół boxa żeby przestawić boxa, najśmiejszniejsze gówno jakie
+            // w życiu widziałem
 
             Row (
                 modifier = Modifier.fillMaxWidth(),
@@ -240,37 +251,44 @@ fun CreateNoteScreen(
 
 
                 Box(
-                    modifier = Modifier
-                        .size(width = 45.dp, height = 45.dp) // Set the size of the button
-                        .background(Color.Transparent, shape = RoundedCornerShape(8.dp)) // Rounded rectangle shape
-                        .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)) // Border
-                        .clickable { showDialog = true }, // Toggle icon on click
-                    contentAlignment = Alignment.Center // Center the icon
-                )
-                {
-                    Icon(
-                        painter = painterResource(
-                            id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
-                        ),
-                        contentDescription = if (isSaved) "Saved" else "Save",
-                        tint = Color.Black,
-                        modifier = Modifier.size(35.dp) // Icon size
+                    modifier = Modifier.padding(bottom = 40.dp, end = 40.dp)
+                ){
+                    // Save icon button
+                    Box(
+                        modifier = Modifier
+                            .size(width = 45.dp, height = 45.dp) // Set the size of the button
+                            .background(Color.White, shape = RoundedCornerShape(8.dp)) // Rounded rectangle shape
+                            .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)) // Border
+                            .clickable { showDialog = true },
+                        contentAlignment = Alignment.Center // Center the icon
                     )
+                    {
+                        Icon(
+                            painter = painterResource(
+                                id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
+                            ),
+                            contentDescription = if (isSaved) "Saved" else "Save",
+                            tint = Color.Black,
+                            modifier = Modifier.size(35.dp) // Icon size
+                        )
+                    }
                 }
 
             }
 
         }
 
-    }
+        }
+
 
 
     if(showDialog){
         PickerDialog(
             onDismiss = { showDialog = false},
-            onSave = { priority, category ->
+            onSave = { priority, category, time ->
                 viewModel.updateSelectedPriority(priority)
                 viewModel.updateSelectedCategory(category)
+                viewModel.updateReminderTime(time)
                 viewModel.saveNote()
                 showDialog = false
             },

@@ -1,11 +1,18 @@
 package com.example.notesapp.presentation._common.composables
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -18,7 +25,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.notesapp.R
@@ -30,23 +39,50 @@ import com.example.notesapp.domain.models.Priority
 @Composable
 fun PickerDialog(
     onDismiss: () -> Unit,
-    onSave: (Priority, Category) -> Unit,
+    onSave: (Priority, Category, reminderTime: Long? ) -> Unit,
     priorities: List<Priority>,
     categories: List<Category>,
     onAddCategory: (Category) -> Unit
 ) {
+
+    // priority variables
     var selectedPriority by remember { mutableStateOf(priorities.firstOrNull() ?: Priority("", 0))}
+    var prioritiesExpanded by remember { mutableStateOf(false)}
+
+    // category variables
     var selectedCategory by remember { mutableStateOf(categories.firstOrNull() ?: Category("",0))}
+    var categoriesExpanded by remember { mutableStateOf(false)}
     var newCategory by remember { mutableStateOf(Category("",0)) }
 
-    var prioritiesExpanded by remember { mutableStateOf(false)}
-    var categoriesExpanded by remember { mutableStateOf(false)}
+    // reminder variables
+    val context = LocalContext.current
+    val currentDateTime = remember { java.util.Calendar.getInstance() } // Current date + current time
+
+    // date
+    val dateFormatter = remember { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()) }
+    var isReminderSet by remember { mutableStateOf(false)}
+    var setReminderDate by remember { mutableStateOf<Long?>(null) }
+
+    // time
+    val timeFormatter = remember { java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()) }
+
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(
-                onClick = { onSave(selectedPriority, selectedCategory) }
+                onClick = {
+                    // init with correct value depending on the current reminder time variable state
+                    val reminderTime = if (isReminderSet && setReminderDate != null && setReminderDate!! > System.currentTimeMillis()) {
+                        setReminderDate
+                    } else
+                    {
+                        null
+                    }
+                    onSave(selectedPriority, selectedCategory, reminderTime)
+                },
+                // validate whether date is correct
+                enabled = !isReminderSet || (setReminderDate != null && setReminderDate!! > System.currentTimeMillis()) // Validate reminder
             ) {
                 Text("Save")
             }
@@ -152,14 +188,108 @@ fun PickerDialog(
                                 onAddCategory(newCategory)
                                 newCategory = Category("",0)// wipe data
                             }
-                        }) {
+                        }){
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_add),
-                                contentDescription = "Add Category"
-                            )
+                                contentDescription = "Add Category")
                         }
                     }
                 )
+
+                // Set reminder checkbox
+                Box(modifier = Modifier
+                    .clickable{isReminderSet = !isReminderSet}
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top=10.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically, // Align items in the center vertically
+                        horizontalArrangement = Arrangement.Start // Ensure checkbox and text are aligned left
+                    ) {
+                        Checkbox(
+                            checked = isReminderSet,
+                            onCheckedChange = {
+                                isReminderSet = it
+                                              }, // Keep checkbox state in 1sync
+                            )
+                        Text("Set reminder")
+                    }
+                }
+
+
+                // Reminder Date + Time Picker
+                if (isReminderSet) {
+                    val formattedDate = setReminderDate?.let { dateFormatter.format(it) }
+                        ?: dateFormatter.format(currentDateTime.timeInMillis)
+                    val formattedTime = setReminderDate?.let { timeFormatter.format(it) }
+                        ?: timeFormatter.format(currentDateTime.timeInMillis)
+
+                    // Date Picker
+                    OutlinedTextField(
+                        value = formattedDate,
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        label = { Text("Reminder Date") },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                val datePicker = android.app.DatePickerDialog(
+                                    context,
+                                    { _, year, month, dayOfMonth ->
+                                        currentDateTime.set(java.util.Calendar.YEAR, year)
+                                        currentDateTime.set(java.util.Calendar.MONTH, month)
+                                        currentDateTime.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth)
+                                        setReminderDate = currentDateTime.timeInMillis // Update timestamp
+                                    },
+                                    currentDateTime.get(java.util.Calendar.YEAR),
+                                    currentDateTime.get(java.util.Calendar.MONTH),
+                                    currentDateTime.get(java.util.Calendar.DAY_OF_MONTH)
+                                )
+                                datePicker.show()
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_calendar_64),
+                                    contentDescription = "Pick Date"
+                                )
+                            }
+                        }
+                    )
+
+                    // Time Picker
+                    OutlinedTextField(
+                        value = formattedTime,
+                        onValueChange = {},
+                        readOnly = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        label = { Text("Reminder Time") },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                val timePicker = android.app.TimePickerDialog(
+                                    context,
+                                    { _, hour, minute ->
+                                        currentDateTime.set(java.util.Calendar.HOUR_OF_DAY, hour)
+                                        currentDateTime.set(java.util.Calendar.MINUTE, minute)
+                                        currentDateTime.set(java.util.Calendar.SECOND, 0) // Clear seconds
+                                        setReminderDate = currentDateTime.timeInMillis // Update timestamp
+                                    },
+                                    currentDateTime.get(java.util.Calendar.HOUR_OF_DAY),
+                                    currentDateTime.get(java.util.Calendar.MINUTE),
+                                    true // Use 24-hour format
+                                )
+                                timePicker.show()
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_time_64),
+                                    contentDescription = "Pick Time"
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
     )
