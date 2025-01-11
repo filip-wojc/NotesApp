@@ -40,6 +40,7 @@ data class Note (
     val title: String,
     val content: String,
     val timestamp: Long,
+    val reminderDate: Long?,
     val color: Int,
     val categoryId: Int,
     val priorityId: Int,

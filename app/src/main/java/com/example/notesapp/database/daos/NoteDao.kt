@@ -21,6 +21,9 @@ interface NoteDao {
     @Query("Select * from note where noteId=:id")
     suspend fun getNoteById(id: Int) : Note?
 
+    @Query("SELECT * FROM note WHERE reminderDate IS NOT NULL AND reminderDate <= :currentTime")
+    fun getDueReminders(currentTime: Long): Flow<List<Note>>
+
     @Upsert
     suspend fun upsertNote(note: Note)
 
