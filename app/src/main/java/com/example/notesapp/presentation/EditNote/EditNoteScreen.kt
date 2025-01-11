@@ -270,9 +270,10 @@ fun EditNoteScreen(
     if(showDialog){
         PickerDialog(
             onDismiss = { showDialog = false},
-            onSave = { priority, category ->
+            onSave = { priority, category, time ->
                 viewModel.updateSelectedPriority(priority)
                 viewModel.updateSelectedCategory(category)
+                // TODO: ADD TIME PARSING
                 viewModel.saveNote()
                 showDialog = false
             },

@@ -165,6 +165,7 @@ class EditNoteViewModel @Inject constructor(
             _title.value,
             _description.value,
             System.currentTimeMillis(),
+            null, // TODO: fill with date
             _selectedColor.value.toArgb(),
             selectedCategory!!.categoryId,
             selectedPriority!!.priorityId,
