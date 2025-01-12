@@ -1,5 +1,8 @@
 package com.example.notesapp.presentation._common.composables
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.notesapp.R
 import com.example.notesapp.domain.models.Category
 import com.example.notesapp.domain.models.Priority
+import com.example.notesapp.domain.utils.Notifications.ReminderScheduler
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -57,6 +66,7 @@ fun PickerDialog(
     // reminder variables
     val context = LocalContext.current
     val currentDateTime = remember { java.util.Calendar.getInstance() } // Current date + current time
+    val reminderPermissionsGranted = remember { mutableStateOf(false) }
 
     // date
     val dateFormatter = remember { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()) }
@@ -66,6 +76,28 @@ fun PickerDialog(
     // time
     val timeFormatter = remember { java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()) }
 
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            reminderPermissionsGranted.value = isGranted
+        }
+    )
+
+    // Trigger permission request when the dialog is first shown
+    LaunchedEffect(Unit) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            val permissionGranted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            reminderPermissionsGranted.value = permissionGranted
+
+            if (!permissionGranted) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -79,6 +111,16 @@ fun PickerDialog(
                     {
                         null
                     }
+
+                    if (reminderTime != null) {
+                        ReminderScheduler.scheduleReminder(
+                            context = context,
+                            reminderTime = reminderTime,
+                            title = "Reminder",
+                            message = "Don't forget to check your note in ${selectedCategory.name}!"
+                        )
+                    }
+
                     onSave(selectedPriority, selectedCategory, reminderTime)
                 },
                 // validate whether date is correct
@@ -198,7 +240,13 @@ fun PickerDialog(
 
                 // Set reminder checkbox
                 Box(modifier = Modifier
-                    .clickable{isReminderSet = !isReminderSet}
+                    .then(
+                        if (reminderPermissionsGranted.value) {
+                            Modifier.clickable { isReminderSet = !isReminderSet }
+                        } else {
+                            Modifier // No clickable modifier when permission is not granted
+                        }
+                    )
                     .align(Alignment.CenterHorizontally)
                     .padding(top=10.dp)
                 ) {
@@ -211,6 +259,7 @@ fun PickerDialog(
                             onCheckedChange = {
                                 isReminderSet = it
                                               }, // Keep checkbox state in 1sync
+                            enabled = reminderPermissionsGranted.value
                             )
                         Text("Set reminder")
                     }

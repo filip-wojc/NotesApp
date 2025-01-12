@@ -26,6 +26,7 @@ import com.example.notesapp.domain.models.Category
 import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.repositories.CategoryRepository
 import com.example.notesapp.domain.repositories.PriorityRepository
+import com.example.notesapp.domain.utils.Notifications.NotificationsUtility
 import com.example.notesapp.presentation.CreateNote.CreateNoteScreen
 import com.example.notesapp.presentation.notes.NotesScreen
 import com.example.notesapp.ui.theme.NotesAppTheme
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        NotificationsUtility.createNotificationChannel(this)
 
         setContent {
             NotesAppTheme {
