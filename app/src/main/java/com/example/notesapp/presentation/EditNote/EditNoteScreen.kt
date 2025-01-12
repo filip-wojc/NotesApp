@@ -273,7 +273,7 @@ fun EditNoteScreen(
             onSave = { priority, category, time ->
                 viewModel.updateSelectedPriority(priority)
                 viewModel.updateSelectedCategory(category)
-                // TODO: ADD TIME PARSING
+                viewModel.updateReminderTime(time)
                 viewModel.saveNote()
                 showDialog = false
             },

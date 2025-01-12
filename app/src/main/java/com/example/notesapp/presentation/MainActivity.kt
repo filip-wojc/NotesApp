@@ -82,7 +82,11 @@ class MainActivity : ComponentActivity() {
                             ) + fadeOut(animationSpec = tween(300))
                         }
                     ) {
-                        CreateNoteScreen(navController = navController)
+                        //CreateNoteScreen(navController = navController)
+                        EditNoteScreen(
+                            navController = navController,
+                            noteId = -1
+                        )
                     }
 
                     composable(
