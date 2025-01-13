@@ -5,6 +5,12 @@
 
 ---
 
+## Authors
+- [filip-wojc](https://github.com/filip-wojc)
+- [DarknessoPirate](https://github.com/DarknessoPirate)
+ 
+---
+
 ## Features
 - **Note Management**: Create, edit, and delete notes.
 - **Sorting and Filtering**: Organize notes by category, priority, or other criteria.
