@@ -35,6 +35,7 @@ val Black = Color(0xFF2c3539)
 // Light theme
 val BackgroundLight = Color(0xFFe2eafc)
 val LightYellow = Color(0xFFF0F5C9)
+val ButtonDisabledContainerLight = Color(0xFFDCD8D8)
 
 // Dark theme
 val SecondaryDark = Color(0xFF39A3D0)
@@ -42,6 +43,8 @@ val BackgroundDark = Color(0xFF272D36)
 val OnBackgroundDark = Color(0xFF39A3D0)
 val SurfaceDark = Color(0xFF171C23)
 val OnSurfaceDark = Color(0xFF39A3D0)
+val ButtonDisabledContainerDark = Color(0xFF25252A)
+
 
 
 

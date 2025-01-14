@@ -17,7 +17,7 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary = Color.White,
     secondary = SecondaryDark,
     onSecondary = Color.White,
-    tertiary = Pink80,
+    tertiary = ButtonDisabledContainerDark,
     onTertiary = Color.White,
 
     background = BackgroundDark,
@@ -29,7 +29,7 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = BackgroundLight,
     secondary = LightYellow,
-    tertiary = Pink80,
+    tertiary = ButtonDisabledContainerLight,
 
     background = BackgroundLight,
     surface = Color(0xFFFFFBFE),

@@ -114,8 +114,8 @@ fun PickerDialog(
                 colors = ButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.surface,
-                    disabledContentColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContainerColor = MaterialTheme.colorScheme.tertiary
                 ),
                 onClick = {
                     // init with correct value depending on the current reminder time variable state
@@ -149,8 +149,8 @@ fun PickerDialog(
                 colors = ButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.surface,
-                    disabledContentColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent
+                    disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContainerColor = MaterialTheme.colorScheme.tertiary
                 ),
             ) {
                 Text("Cancel")
