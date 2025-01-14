@@ -41,6 +41,10 @@ import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.utils.Notifications.ReminderScheduler
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,6 +104,7 @@ fun PickerDialog(
     }
 
     AlertDialog(
+
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(
@@ -137,7 +142,7 @@ fun PickerDialog(
         title = { Text("Select Priority and Category") },
         // Pickers
         text = {
-            Column {
+            Column() {
 
                 // Priority Picker
                 ExposedDropdownMenuBox(
@@ -159,7 +164,9 @@ fun PickerDialog(
                                 contentDescription = "Expand Priority",
                                 modifier = Modifier.size(35.dp)
                             )
-                        }
+                        },
+                        colors = TextFieldDefaults.colors()
+
                     )
                     ExposedDropdownMenu(
                         expanded = prioritiesExpanded,

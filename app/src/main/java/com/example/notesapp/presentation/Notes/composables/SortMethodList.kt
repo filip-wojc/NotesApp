@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +46,7 @@ fun SortMethodList(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(LightYellow, RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(12.dp))
                         .then(
                             if (isSelected) Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))
                             else Modifier
@@ -69,7 +70,7 @@ fun SortMethodList(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(LightYellow, RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(12.dp))
                         .then(
                             if (isSelected) Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))
                             else Modifier

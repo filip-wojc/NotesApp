@@ -3,9 +3,12 @@ package com.example.notesapp.presentation.EditNote
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +25,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -42,7 +48,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notesapp.R
 import com.example.notesapp.domain.models.Note
-import com.example.notesapp.presentation.CreateNote.CreateNoteViewModel
 import com.example.notesapp.presentation._common.composables.PickerDialog
 import com.example.notesapp.ui.theme.Black
 
@@ -97,8 +102,9 @@ fun EditNoteScreen(
     val colors = Note.colors
     val rows = colors.chunked(7)
     var showDialog by remember { mutableStateOf(false) }
-    var isSaved by remember { mutableStateOf(false) }
+    var showColorPicker by remember { mutableStateOf(false) }
 
+    val isDarkTheme = isSystemInDarkTheme()
     val speechState by viewModel.voiceToTextParser.state.collectAsState()
 
     LaunchedEffect(speechState.spokenText) {
@@ -107,166 +113,223 @@ fun EditNoteScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(selectedColor.value)
-            .padding(6.dp)
-    )
-    {
-
-
-        // Title
+    // Tools top column
+    Column() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp,2.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .background(MaterialTheme.colorScheme.surface),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         )
         {
-            IconButton(onClick = {navController.popBackStack()})
+
+            // back icon
+            IconButton(onClick = { navController.popBackStack() })
             {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "Back Arrow"
+                    contentDescription = "Back Arrow",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
-            Box(modifier = Modifier.weight(1f))
+            // color wheel button
+            val colorWheelBitmap = ImageBitmap.imageResource(id = R.drawable.ic_color_wheel)
+            Box(
+                modifier = Modifier
+                    .size(width = 45.dp, height = 45.dp)
+                    .background(
+                        Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable { showColorPicker = !showColorPicker },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    bitmap = colorWheelBitmap,
+                    contentDescription = "Color Wheel",
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+
+            // Save button
+            Box(
+                modifier = Modifier
+                    .size(width = 45.dp, height = 45.dp) // Set the size of the button
+                    .background(
+                        Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    ) // Rounded rectangle shape
+                    .clickable { showDialog = true }, // Toggle icon on click
+                contentAlignment = Alignment.Center, // Center the icon
+
+                )
             {
-                BasicTextField(
-                    value = title.value,
-                    onValueChange = { viewModel.updateTitle(it) },
-                    textStyle = TextStyle(
-                        fontSize = 25.sp,
-                        color = Color.Black
+                Icon(
+                    painter = painterResource(
+                        id =  R.drawable.ic_save
                     ),
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(end = 50.dp)
-                )
-                Text(
-                    text = "${title.value.length}/30",
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.align(Alignment.CenterEnd)
+                    contentDescription ="Save",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(35.dp), // Icon size
+
                 )
             }
-
         }
 
-
         HorizontalDivider(color = Black)
-        Spacer(modifier = Modifier.padding(2.dp))
 
-        // Color picker
-        rows.forEach { rowColors ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(selectedColor.value)
+                .padding(6.dp)
+        )
+        {
+
+
+            // Title
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 5.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                    .padding(10.dp, 2.dp),
+                verticalAlignment = Alignment.CenterVertically
             )
             {
-                rowColors.forEach { color ->
-                    IconButton(
-                        onClick = { viewModel.updateColor(color) },
-                        modifier = Modifier
-                            .size(30.dp)
-                            .padding(1.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(30.dp)
-                                .background(color, shape = CircleShape)
-                                .border( // Add border here
-                                    width = 1.dp,
-                                    color = if (selectedColor.value == color) Color.White else Color.Black, // Highlight selected
-                                    shape = CircleShape
-                                )
-                        )
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.padding(2.dp))
-        HorizontalDivider(color = Black)
-        // Description + save button
-        Box(
-            contentAlignment = Alignment.BottomEnd,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 40.dp)
-        )
-        {
-            BasicTextField(
-                value = description.value,
-                onValueChange = { viewModel.updateDescription(it) },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 10.dp, horizontal = 5.dp),
-                textStyle = TextStyle(
-                    fontSize = 15.sp,
-                    color = Color.Black
-                )
-            )
-
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ){
-
-                Spacer(Modifier.width(45.dp))
-
-                IconButton(
-                    onClick = {
-                        if (speechState.isSpeaking) {
-                            viewModel.voiceToTextParser.stopListening()
-                        }
-                        else {
-                            viewModel.voiceToTextParser.startListening("en")
-                        }
-                    }
-                ) {
-                    AnimatedContent(
-                        targetState = speechState.isSpeaking,
-                        modifier = Modifier.size(width = 45.dp, height = 45.dp)
-                    ) {isSpeaking ->
-                        if (isSpeaking) {
-                            Icon(painter = painterResource(R.drawable.baseline_mic_off_24), contentDescription = "Stop button")
-                        } else {
-                            Icon(painter = painterResource(R.drawable.baseline_mic_24), contentDescription = "Start button")
-                        }
-                    }
-                }
-
-
-                Box(
-                    modifier = Modifier
-                        .size(width = 45.dp, height = 45.dp) // Set the size of the button
-                        .background(Color.Transparent, shape = RoundedCornerShape(8.dp)) // Rounded rectangle shape
-                        .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)) // Border
-                        .clickable { showDialog = true }, // Toggle icon on click
-                    contentAlignment = Alignment.Center // Center the icon
-                )
+                Box(modifier = Modifier.weight(1f))
                 {
-                    Icon(
-                        painter = painterResource(
-                            id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
+                    BasicTextField(
+                        value = title.value,
+                        onValueChange = { viewModel.updateTitle(it) },
+                        textStyle = TextStyle(
+                            fontSize = 25.sp,
+                            color = Color.Black
                         ),
-                        contentDescription = if (isSaved) "Saved" else "Save",
-                        tint = Color.Black,
-                        modifier = Modifier.size(35.dp) // Icon size
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(end = 50.dp)
+                    )
+                    Text(
+                        text = "${title.value.length}/30",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
 
             }
 
+
+            HorizontalDivider(color = Black)
+            Spacer(modifier = Modifier.padding(2.dp))
+
+            // Color picker
+            AnimatedVisibility(
+                visible = showColorPicker,
+                modifier = Modifier.fillMaxWidth())
+            {
+                Column {
+                    rows.forEach { rowColors ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 5.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        )
+                        {
+                            rowColors.forEach { color ->
+                                IconButton(
+                                    onClick = { viewModel.updateColor(color) },
+                                    modifier = Modifier
+                                        .size(30.dp)
+                                        .padding(1.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .background(color, shape = CircleShape)
+                                            .border( // Add border here
+                                                width = 1.dp,
+                                                color = if (selectedColor.value == color) Color.White else Color.Black, // Highlight selected
+                                                shape = CircleShape
+                                            )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.padding(2.dp))
+                    HorizontalDivider(color = Black)
+                }
+            }
+
+
+
+            // Description + save button
+            Box(
+                contentAlignment = Alignment.BottomEnd,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 40.dp)
+            )
+            {
+                BasicTextField(
+                    value = description.value,
+                    onValueChange = { viewModel.updateDescription(it) },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(vertical = 10.dp, horizontal = 16.dp),
+                    textStyle = TextStyle(
+                        fontSize = 15.sp,
+                        color = Color.Black
+                    )
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    Spacer(Modifier.width(45.dp))
+
+                    IconButton(
+                        onClick = {
+                            if (speechState.isSpeaking) {
+                                viewModel.voiceToTextParser.stopListening()
+                            } else {
+                                viewModel.voiceToTextParser.startListening("en")
+                            }
+                        }
+                    ) {
+                        AnimatedContent(
+                            targetState = speechState.isSpeaking,
+                            modifier = Modifier.size(width = 45.dp, height = 45.dp)
+                        ) { isSpeaking ->
+                            if (isSpeaking) {
+                                Icon(
+                                    painter = painterResource(R.drawable.baseline_mic_off_24),
+                                    contentDescription = "Stop button"
+                                )
+                            } else {
+                                Icon(
+                                    painter = painterResource(R.drawable.baseline_mic_24),
+                                    contentDescription = "Start button"
+                                )
+                            }
+                        }
+                    }
+
+
+
+
+                }
+
+            }
+
         }
-
     }
-
     if(showDialog){
         PickerDialog(
             onDismiss = { showDialog = false},

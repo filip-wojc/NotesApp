@@ -1,12 +1,12 @@
 package com.example.notesapp.presentation.CreateNote
 
-import androidx.compose.animation.animateContentSize
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,11 +23,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -49,7 +47,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notesapp.R
 import com.example.notesapp.domain.models.Note
-import com.example.notesapp.domain.utils.VoiceToTextParserState
 import com.example.notesapp.presentation._common.composables.PickerDialog
 import com.example.notesapp.ui.theme.*
 
@@ -100,7 +97,7 @@ fun CreateNoteScreen(
     var showDialog by remember { mutableStateOf(false) }
     var isSaved by remember { mutableStateOf(false) }
 
-
+    val isDarkTheme = isSystemInDarkTheme()
     val speechState by viewModel.voiceToTextParser.state.collectAsState()
 
     LaunchedEffect(speechState.spokenText) {
@@ -265,7 +262,7 @@ fun CreateNoteScreen(
                     {
                         Icon(
                             painter = painterResource(
-                                id = if (isSaved) R.drawable.ic_saved_256 else R.drawable.ic_save_256 // Toggle icon
+                                id =  if (isDarkTheme) R.drawable.ic_save_light else R.drawable.ic_save_dark// Toggle icon
                             ),
                             contentDescription = if (isSaved) "Saved" else "Save",
                             tint = Color.Black,

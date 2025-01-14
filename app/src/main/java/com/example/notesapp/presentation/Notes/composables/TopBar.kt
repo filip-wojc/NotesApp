@@ -1,6 +1,7 @@
 package com.example.notesapp.presentation.notes.composables
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +33,7 @@ fun TopBar(
     isSearching: Boolean
 ) {
     Row (
-        modifier.fillMaxWidth(),
+        modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primary),
         verticalAlignment = Alignment.CenterVertically
     ){
         Row (
@@ -44,9 +46,10 @@ fun TopBar(
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = "Menu button",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
-            Text(currentFilter, fontSize = 20.sp)
+            Text(currentFilter, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
         }
         Row (
             verticalAlignment = Alignment.CenterVertically,
@@ -59,12 +62,14 @@ fun TopBar(
                 if (!isSearching) {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = "Toogle Searching"
+                        contentDescription = "Toggle Searching",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 } else {
                     Icon(
                         painter = painterResource(R.drawable.baseline_search_off_24),
-                        contentDescription = "Toogl"
+                        contentDescription = "Toggle",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -73,7 +78,8 @@ fun TopBar(
             ) {
                 Icon(
                     imageVector = if (!isDeleting) Icons.Filled.Delete else Icons.Filled.Check,
-                    contentDescription = "Toogle delete"
+                    contentDescription = "Toggle delete",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

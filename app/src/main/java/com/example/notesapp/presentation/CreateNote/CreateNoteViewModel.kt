@@ -38,7 +38,8 @@ class CreateNoteViewModel @Inject constructor(
     private val _description = MutableStateFlow("")
     val description: StateFlow<String> = _description
 
-    private val _selectedColor = MutableStateFlow(Color.White) // Default color
+    val colors = Note.colors
+    private val _selectedColor = MutableStateFlow(colors.first()) // Default color
     val selectedColor: StateFlow<Color> = _selectedColor
 
     private val _priorities = mutableStateListOf<Priority>()

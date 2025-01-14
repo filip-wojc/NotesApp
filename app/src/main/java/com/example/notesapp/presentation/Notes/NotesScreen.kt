@@ -60,7 +60,7 @@ import com.example.notesapp.presentation.notes.NotesViewModel
 import com.example.notesapp.presentation.notes.composables.NotePreview
 import com.example.notesapp.presentation.notes.composables.SearchingBar
 import com.example.notesapp.presentation.notes.composables.SortMethodList
-import com.example.notesapp.ui.theme.Background
+import com.example.notesapp.ui.theme.BackgroundLight
 import com.example.notesapp.ui.theme.LightYellow
 import kotlinx.coroutines.launch
 
@@ -88,14 +88,20 @@ fun NotesScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet (
-                modifier = Modifier.width(200.dp)
+                modifier = Modifier.width(200.dp),
             ){
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surface) // Set the background color
+                ) {
                 Text(
                     text = "Categories",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(16.dp)
+
                 )
-                HorizontalDivider()
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface)
                 categories.value.forEach { category ->
                     TextButton(
                         onClick = {
@@ -106,11 +112,12 @@ fun NotesScreen(
                     ) {
                         Text(
                             text = category.name,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
-                HorizontalDivider()
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface)
                 TextButton(
                     onClick = {
                         viewModel.getNotes()
@@ -120,16 +127,18 @@ fun NotesScreen(
                 ) {
                     Text(
                         text = "All Notes",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
+         }
         }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Background),
+                .background(MaterialTheme.colorScheme.background),
         ) {
             TopBar(
                 currentFilter = currentCategory.value.name,
@@ -153,11 +162,13 @@ fun NotesScreen(
                     Icon(
                         painter = painterResource(R.drawable.baseline_sort_24),
                         contentDescription = "SortButton",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Text(
                     text = currentSortMethod.value,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 IconButton(
                     onClick = { viewModel.toggleSortDirection() },
@@ -165,6 +176,7 @@ fun NotesScreen(
                     Icon(
                         imageVector = if (isOrderDescending.value) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
                         contentDescription = "SortButton",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -199,7 +211,7 @@ fun NotesScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Background)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 LazyColumn(
                     modifier = Modifier
@@ -234,13 +246,14 @@ fun NotesScreen(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(48.dp)
-                        .background(Color.White, CircleShape)
+                        .background(MaterialTheme.colorScheme.surface, CircleShape)
                         .zIndex(1f)
                         .size(60.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Add note",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

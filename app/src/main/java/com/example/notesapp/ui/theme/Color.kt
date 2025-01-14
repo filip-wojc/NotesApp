@@ -24,7 +24,7 @@ val LightBlue = Color(0xFFbed4f0)
 val MediumBlue = Color(0xFF78DBF9)
 val DarkBlue = Color(0xFF4867C7)
 
-val White = Color
+
 val BlueViolet = Color(0xFFc9c9ff)
 val Violet = Color(0xFFC188EF)
 val DarkViolet = Color(0xFF4b2e83)
@@ -32,11 +32,16 @@ val Grey = Color(0xFFA6AEBF)
 
 val Black = Color(0xFF2c3539)
 
-val Background = Color(0xFFe2eafc)
+// Light theme
+val BackgroundLight = Color(0xFFe2eafc)
 val LightYellow = Color(0xFFF0F5C9)
 
-
-
+// Dark theme
+val SecondaryDark = Color(0xFF39A3D0)
+val BackgroundDark = Color(0xFF272D36)
+val OnBackgroundDark = Color(0xFF39A3D0)
+val SurfaceDark = Color(0xFF171C23)
+val OnSurfaceDark = Color(0xFF39A3D0)
 
 
 

@@ -37,7 +37,8 @@ class EditNoteViewModel @Inject constructor(
     private val _description = MutableStateFlow("")
     val description: StateFlow<String> = _description
 
-    private val _selectedColor = MutableStateFlow(Color.White)
+    val colors = Note.colors
+    private val _selectedColor = MutableStateFlow(colors.first())
     val selectedColor: StateFlow<Color> = _selectedColor
 
     private val _priorities = mutableStateListOf<Priority>()
@@ -130,7 +131,7 @@ class EditNoteViewModel @Inject constructor(
                 // Fallback to empty/default values
                 _title.value = ""
                 _description.value = ""
-                _selectedColor.value = Color.White
+                _selectedColor.value = colors.first()
                 selectedCategory = Category("", 0)
                 selectedPriority = Priority("", 0)
                 _noteId.value = 0
