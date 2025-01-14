@@ -1,10 +1,12 @@
 package com.example.notesapp.presentation.notes.composables
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -39,13 +41,14 @@ fun TopBar(
     Row (
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary),
+            .background(MaterialTheme.colorScheme.primary)
+            .height(80.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
         Row (
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f)
-                .padding(top = 8.dp)
+                .padding(vertical = 8.dp, horizontal = 4.dp)
         ){
             IconButton(
                 onClick = toggleMenuVisibility,
@@ -56,16 +59,22 @@ fun TopBar(
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
-            if (isSearching) {
+            AnimatedVisibility(
+                visible = isSearching
+            ) {
                 SearchingBar(
                     value = searchText,
                     onValueChange = onSearchTextChange,
                     modifier = Modifier.fillMaxWidth()
 
                 )
-            } else {
+            }
+
+            if (!isSearching) {
                 Text(currentFilter, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
             }
+
+
         }
         Row (
             verticalAlignment = Alignment.CenterVertically,

@@ -36,8 +36,7 @@ fun SearchingBar(
             placeholder = { Text("Search...") },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search icon") },
             modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 40.dp, max =60.dp),
+                .fillMaxWidth(),
             singleLine = true,
             shape = RoundedCornerShape(16.dp),
             colors = androidx.compose.material3.TextFieldDefaults.colors(
@@ -47,7 +46,9 @@ fun SearchingBar(
                 disabledContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+                disabledIndicatorColor = Color.Transparent,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
             ),
 
         )
