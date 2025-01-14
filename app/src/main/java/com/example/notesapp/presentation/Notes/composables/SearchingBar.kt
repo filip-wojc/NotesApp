@@ -3,6 +3,8 @@ package com.example.notesapp.presentation.notes.composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,9 +36,10 @@ fun SearchingBar(
             placeholder = { Text("Search...") },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search icon") },
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .heightIn(min = 40.dp, max =60.dp),
             singleLine = true,
-            shape = RoundedCornerShape(18.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = androidx.compose.material3.TextFieldDefaults.colors(
                 cursorColor = Color.Black,
                 focusedContainerColor = MaterialTheme.colorScheme.secondary,
@@ -45,7 +48,8 @@ fun SearchingBar(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
-            )
+            ),
+
         )
     }
 }

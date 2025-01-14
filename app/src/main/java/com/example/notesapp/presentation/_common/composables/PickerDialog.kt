@@ -43,6 +43,7 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldColors
@@ -82,6 +83,17 @@ fun PickerDialog(
 
     // time
     val timeFormatter = remember { java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()) }
+
+    // THEME
+    val isDarkTheme = isSystemInDarkTheme()
+
+    val themeResId = if (isDarkTheme) {
+        android.R.style.Theme_DeviceDefault_Dialog
+    } else {
+        android.R.style.Theme_DeviceDefault_Light_Dialog
+    }
+
+
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -321,6 +333,7 @@ fun PickerDialog(
                             IconButton(onClick = {
                                 val datePicker = android.app.DatePickerDialog(
                                     context,
+                                    themeResId,
                                     { _, year, month, dayOfMonth ->
                                         currentDateTime.set(java.util.Calendar.YEAR, year)
                                         currentDateTime.set(java.util.Calendar.MONTH, month)
@@ -358,6 +371,7 @@ fun PickerDialog(
                             IconButton(onClick = {
                                 val timePicker = android.app.TimePickerDialog(
                                     context,
+                                    themeResId,
                                     { _, hour, minute ->
                                         currentDateTime.set(java.util.Calendar.HOUR_OF_DAY, hour)
                                         currentDateTime.set(java.util.Calendar.MINUTE, minute)

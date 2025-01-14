@@ -142,6 +142,8 @@ fun NotesScreen(
         ) {
             TopBar(
                 currentFilter = currentCategory.value.name,
+                searchText = searchText.value,
+                onSearchTextChange = { viewModel.searchBarOnValueChange(it) },
                 toggleDeleting = { viewModel.toggleDeleting() },
                 toggleMenuVisibility = {
                     coroutineScope.launch { drawerState.open() }
@@ -197,16 +199,7 @@ fun NotesScreen(
                 }
             }
 
-            AnimatedVisibility(
-                visible = isSearchBarVisible.value,
-                enter = slideInVertically(),
-            ) {
-                SearchingBar(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    value = searchText.value,
-                    onValueChange = { viewModel.searchBarOnValueChange(it) }
-                )
-            }
+
 
             Box(
                 modifier = Modifier

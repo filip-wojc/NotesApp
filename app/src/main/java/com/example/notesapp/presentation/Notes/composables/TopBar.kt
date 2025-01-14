@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.notesapp.R
 
@@ -26,6 +28,8 @@ import com.example.notesapp.R
 fun TopBar(
     modifier: Modifier = Modifier,
     currentFilter: String,
+    searchText: String,
+    onSearchTextChange: (String) -> Unit,
     toggleMenuVisibility: () -> Unit,
     toggleSearchBarVisibility: () -> Unit,
     toggleDeleting: () -> Unit,
@@ -33,12 +37,15 @@ fun TopBar(
     isSearching: Boolean
 ) {
     Row (
-        modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primary),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary),
         verticalAlignment = Alignment.CenterVertically
     ){
         Row (
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(0.3f)
+            modifier = Modifier.weight(1f)
+                .padding(top = 8.dp)
         ){
             IconButton(
                 onClick = toggleMenuVisibility,
@@ -49,12 +56,21 @@ fun TopBar(
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
-            Text(currentFilter, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
+            if (isSearching) {
+                SearchingBar(
+                    value = searchText,
+                    onValueChange = onSearchTextChange,
+                    modifier = Modifier.fillMaxWidth()
+
+                )
+            } else {
+                Text(currentFilter, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
+            }
         }
         Row (
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End,
-            modifier = Modifier.weight(0.2f)
+            modifier = Modifier.weight(0.3f)
         ) {
             IconButton(
                 onClick = toggleSearchBarVisibility,
