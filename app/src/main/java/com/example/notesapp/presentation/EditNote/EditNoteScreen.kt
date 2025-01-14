@@ -292,8 +292,6 @@ fun EditNoteScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-                    Spacer(Modifier.width(45.dp))
-
                     IconButton(
                         onClick = {
                             if (speechState.isSpeaking) {

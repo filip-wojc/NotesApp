@@ -42,10 +42,13 @@ import com.example.notesapp.domain.utils.Notifications.ReminderScheduler
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -108,6 +111,12 @@ fun PickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(
+                colors = ButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    disabledContentColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent
+                ),
                 onClick = {
                     // init with correct value depending on the current reminder time variable state
                     val reminderTime = if (isReminderSet && setReminderDate != null && setReminderDate!! > System.currentTimeMillis()) {
@@ -135,7 +144,15 @@ fun PickerDialog(
             }
         },
         dismissButton = {
-            Button(onClick = { onDismiss() }) {
+            Button(
+                onClick = { onDismiss() },
+                colors = ButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    disabledContentColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent
+                ),
+            ) {
                 Text("Cancel")
             }
         },
@@ -165,7 +182,10 @@ fun PickerDialog(
                                 modifier = Modifier.size(35.dp)
                             )
                         },
-                        colors = TextFieldDefaults.colors()
+                        colors = TextFieldDefaults.colors(
+                            focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+                        )
 
                     )
                     ExposedDropdownMenu(
@@ -206,7 +226,11 @@ fun PickerDialog(
                                 contentDescription = "Expand Category",
                                 modifier = Modifier.size(35.dp)
                             )
-                        }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
                     ExposedDropdownMenu(
                         expanded = categoriesExpanded,
@@ -242,7 +266,11 @@ fun PickerDialog(
                                 painter = painterResource(id = R.drawable.ic_add),
                                 contentDescription = "Add Category")
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
 
                 // Set reminder checkbox
@@ -310,7 +338,11 @@ fun PickerDialog(
                                     contentDescription = "Pick Date"
                                 )
                             }
-                        }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
 
                     // Time Picker
@@ -343,7 +375,11 @@ fun PickerDialog(
                                     contentDescription = "Pick Time"
                                 )
                             }
-                        }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
                 }
             }
