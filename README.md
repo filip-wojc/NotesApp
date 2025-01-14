@@ -29,14 +29,14 @@
 
 ---
 
-## Screenshots
+## Screenshots (Light theme)
 - **Home Screen**
 
-  ![HomeScreen](https://github.com/user-attachments/assets/70301972-6544-45dc-993e-f2420404b552)
+  ![HomeWithNoFilters](https://github.com/user-attachments/assets/c4bf3d44-620e-4658-80e3-1ef5c8353a50)
 
 - **Home Screen with sorting methods and search bar**
 
-  ![HomeScreenWithFilters](https://github.com/user-attachments/assets/7d3a4e82-5b9f-428e-bef7-b9c46a756a81)
+  ![Home](https://github.com/user-attachments/assets/857542f6-b480-4175-909a-63c997b81ede)
 
 - **New Note Screen**
 
