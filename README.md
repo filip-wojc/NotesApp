@@ -17,7 +17,7 @@
 - **Categories and Priorities**: Assign categories and priorities to notes for better organization.
 - **Reminders**: Set reminders for notes to receive notifications at the desired time.
 - **Voice Input**: Add content to notes using voice commands for quick and efficient input.
-
+- **Themes**: App supports colors for dark and light theme.
 ---
 
 ##  Technologies Used
@@ -40,11 +40,11 @@
 
 - **New Note Screen**
 
-  ![NewNoteScreen](https://github.com/user-attachments/assets/b277a5d8-220d-4300-a9f3-22fedb9c9b1e)
+  ![NewNoteScreen](https://github.com/user-attachments/assets/2c57b510-404b-47e6-be47-0326b04c2810)
 
 - **Saving Note**
 
-  ![NoteSaving](https://github.com/user-attachments/assets/3647b415-3ca2-44ed-84e4-aafa4520aaeb)
+  ![SavingNoteScreen](https://github.com/user-attachments/assets/f01bef14-405a-41eb-abb2-573e8ed6c5ac)
 
 ---
 
@@ -58,7 +58,6 @@
 ## Future Development Plans
 1. **Cloud Sync**: Enable syncing notes across multiple devices using cloud storage.
 2. **Export Notes**: Export notes to PDF or other formats.
-3. **Dark Mode**: Enhance user experience with dark mode support.
 
 ---
 
