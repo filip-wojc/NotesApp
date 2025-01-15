@@ -27,7 +27,6 @@ import com.example.notesapp.domain.models.Priority
 import com.example.notesapp.domain.repositories.CategoryRepository
 import com.example.notesapp.domain.repositories.PriorityRepository
 import com.example.notesapp.domain.utils.Notifications.NotificationsUtility
-import com.example.notesapp.presentation.CreateNote.CreateNoteScreen
 import com.example.notesapp.presentation.notes.NotesScreen
 import com.example.notesapp.ui.theme.NotesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +81,6 @@ class MainActivity : ComponentActivity() {
                             ) + fadeOut(animationSpec = tween(300))
                         }
                     ) {
-                        //CreateNoteScreen(navController = navController)
                         EditNoteScreen(
                             navController = navController,
                             noteId = -1
@@ -97,7 +95,7 @@ class MainActivity : ComponentActivity() {
                         EditNoteScreen(
                             navController = navController,
                             noteId = noteId
-                        ) // Pass it to the screen
+                        )
                     }
                 }
 
@@ -119,5 +117,5 @@ object CreateNoteScreen {
 
 @Serializable
 object EditNoteScreen {
-    const val route = "editNoteScreen/{noteId}" // Argument placeholder
+    const val route = "editNoteScreen/{noteId}"
 }

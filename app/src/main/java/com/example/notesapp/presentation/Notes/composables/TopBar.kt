@@ -2,6 +2,7 @@ package com.example.notesapp.presentation.notes.composables
 
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -60,7 +61,7 @@ fun TopBar(
                 )
             }
             AnimatedVisibility(
-                visible = isSearching
+                visible = isSearching,
             ) {
                 SearchingBar(
                     value = searchText,
@@ -70,10 +71,11 @@ fun TopBar(
                 )
             }
 
-            if (!isSearching) {
+            AnimatedVisibility(
+                visible = !isSearching
+            ) {
                 Text(currentFilter, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
             }
-
 
         }
         Row (
